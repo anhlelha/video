@@ -26,3 +26,8 @@ Toàn bộ thời gian hoạt hình nằm trong hàm `render(t)` của `src/scen
 
 - Bố cục: tiêu đề cố định ở trên, nhãn chương (1–7), khung hình 16:9 thu nhỏ ở giữa (cắt 60px mỗi bên), phụ đề chữ to bên dưới. Chừa vùng trên/dưới/phải cho giao diện TikTok.
 - Dựng: `PART=1 VOUT=v1.mp4 node src/render_v.js`, `PART=2 VOUT=v2.mp4 node src/render_v.js`, rồi nối 2 phần và lấy âm thanh từ `chiec-xe-lap-rap-full.mp4`.
+
+## Ảnh bìa (thumbnail)
+
+- `thumbnail-9x16.png` (1080×1920, cho TikTok/Reels/Shorts) và `thumbnail-16x9.png` (1920×1080, cho YouTube).
+- Dựng lại: `OUT=demo node demo/src/thumb.js` (lấy khung hình Cảnh 7 lúc xe bay lên thiên hà, đặt lại tư thế xe và thêm chữ).

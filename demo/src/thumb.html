@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Thumbnail</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; overflow: hidden; background: #000; font-family: 'Be Vietnam Pro', sans-serif; }
+  iframe { position: absolute; left: 0; top: 0; border: 0; }
+  .shade { position: absolute; left: 0; right: 0; }
+  .title { position: absolute; left: 0; right: 0; text-align: center; color: #FFF6E6; font-weight: 800; line-height: 1.08;
+    text-shadow: 0 6px 0 rgba(0,0,0,.55), 0 0 40px rgba(0,0,0,.45); }
+  .title b { color: #FFD28A; }
+  .pill { position: absolute; left: 0; right: 0; text-align: center; }
+  .pill span { display: inline-block; background: #E8743B; color: #fff; font-weight: 800; border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+</style>
+</head>
+<body>
+<iframe id="f"></iframe>
+<div class="shade" id="shadeTop"></div>
+<div class="title" id="title">CHIẾC XE LẮP RÁP<br>TRONG <b>MỘT ĐÊM</b></div>
+<div class="pill" id="pill"><span>Xe bay tới thiên hà… hay chờ sung rụng?</span></div>
+<script>
+const P = new URLSearchParams(location.search);
+const lerp = (a, b, p) => a + (b - a) * p;
+const VERT = P.get('ar') !== '169';
+const T = Number(P.get('t') || 130.6);
+const W = VERT ? 1080 : 1920, H = VERT ? 1920 : 1080;
+document.body.style.width = W + 'px'; document.body.style.height = H + 'px';
+const f = document.getElementById('f');
+f.style.width = W + 'px'; f.style.height = H + 'px';
+const title = document.getElementById('title'), pill = document.getElementById('pill'), shade = document.getElementById('shadeTop');
+if (VERT) {
+  title.innerHTML = 'CHIẾC XE<br>LẮP RÁP<br>TRONG <b>MỘT ĐÊM</b>';
+  Object.assign(title.style, { top: '1330px', fontSize: '104px' });
+  Object.assign(pill.style, { top: '210px' });
+  Object.assign(pill.querySelector('span').style, { fontSize: '50px', padding: '22px 44px', maxWidth: '860px', lineHeight: '1.25' });
+  Object.assign(shade.style, { top: '1250px', height: '670px', background: 'linear-gradient(rgba(20,22,28,0), rgba(20,22,28,.7) 30%)' });
+} else {
+  Object.assign(title.style, { top: '36px', fontSize: '92px' });
+  Object.assign(pill.style, { top: '880px' });
+  Object.assign(pill.querySelector('span').style, { fontSize: '52px', padding: '20px 48px' });
+  Object.assign(shade.style, { top: 0, height: '420px', background: 'linear-gradient(rgba(20,22,28,.7), rgba(20,22,28,0))' });
+}
+window.ready = new Promise(res => {
+  f.onload = async () => {
+    const d = f.contentDocument, w = f.contentWindow;
+    const st = d.createElement('style');
+    st.textContent = `#cap{visibility:hidden!important} html,body{width:${W}px!important;height:${H}px!important}`;
+    d.head.appendChild(st);
+    const svg = d.getElementById('stage');
+    svg.setAttribute('width', W); svg.setAttribute('height', H);
+    // portrait: crisp vector crop around the galaxy + flying car
+    if (VERT) svg.setAttribute('viewBox', `${1000 - 304} 0 607.5 1080`);
+    await d.fonts.ready; await document.fonts.ready;
+    w.render(T);
+    // thumbnail pose: lift the flying car right up under the galaxy, with a star trail behind it
+    const flame = [...d.querySelectorAll('path')].find(e => e.getAttribute('d') === 'M-300 -40 L-420 -20 L-300 0 Z');
+    if (flame) {
+      const fly = flame.parentNode, v2 = fly.parentNode;
+      const CX = 150, CY = -360;
+      fly.setAttribute('transform', `translate(${CX} ${CY}) rotate(-25) scale(.5)`);
+      fly.setAttribute('opacity', 1);
+      flame.setAttribute('opacity', 1);
+      const stars = [...v2.children].filter(e => e.tagName === 'polygon');
+      stars.forEach((st, i) => {
+        const q = (i + 1) / (stars.length + 1);
+        const x = lerp(-60, CX - 110, q), y = lerp(-20, CY + 60, q);
+        st.setAttribute('transform', `translate(${x} ${y}) scale(${.5 + q * .9})`);
+      });
+    }
+    // portrait crop cuts sign ① in half: hide it there
+    if (VERT) [...d.querySelectorAll('text')].filter(e => e.textContent.includes('Cống nạp')).forEach(e => e.parentNode.setAttribute('opacity', 0));
+    res();
+  };
+  f.src = 'part2.html';
+});
+</script>
+</body>
+</html>
