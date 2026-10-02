@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Ảnh bìa</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; overflow: hidden; background: #2B2620; }
+  svg text { font-family: 'Be Vietnam Pro', sans-serif; }
+</style>
+</head>
+<body>
+<svg id="stage"><defs id="defs"></defs></svg>
+<script src="lib.js"></script>
+<script>
+// Cover image. ?ar=169 (1920x1080) or ?ar=916 (1080x1920)
+const VERT = new URLSearchParams(location.search).get('ar') !== '169';
+const W = VERT ? 1080 : 1920, H = VERT ? 1920 : 1080;
+document.body.style.width = W + 'px'; document.body.style.height = H + 'px';
+svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+el('rect', { x: 0, y: 0, width: W, height: H, fill: radGrad([[0, '#55473A'], [1, '#231F1A']]) });
+const big = (x, y, s, size, fill) => txt(svg, x, y, s, { 'font-size': size, 'font-weight': 800, fill, 'letter-spacing': 1 });
+const pts = VERT ? [[330, 760], [750, 940], [330, 1120], [750, 1300], [330, 1480]] : [[230, 330], [595, 330], [960, 330], [1325, 330], [1690, 330]];
+const sc = VERT ? .78 : .86;
+const d = pts.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
+el('path', { d, fill: 'none', stroke: '#F2C14E', 'stroke-width': 7, 'stroke-dasharray': '2 16', 'stroke-linecap': 'round', opacity: .8 });
+pts.forEach(([x, y], i) => {
+  const m = el('g', { transform: `translate(${x} ${y}) scale(${sc}) translate(${-x} ${-y})` });
+  makeEraMedallion(m, i, x, y, false);
+});
+// a question badge on "today"
+const [qx, qy] = pts[4];
+const badge = el('g', { transform: `translate(${qx + 100 * sc} ${qy - 100 * sc})` });
+el('circle', { r: 46, fill: '#F2C14E', stroke: '#2B2620', 'stroke-width': 6 }, badge);
+txt(badge, 0, 24, '?', { 'font-size': 70, 'font-weight': 800, fill: '#2B2620' });
+if (VERT) {
+  big(540, 300, 'KỸ NĂNG NÀO', 118, '#F7EBD3');
+  big(540, 440, 'RỒI CŨNG', 118, '#F7EBD3');
+  big(540, 580, 'RA ĐI?', 140, '#F2C14E');
+} else {
+  big(960, 720, 'KỸ NĂNG NÀO RỒI CŨNG', 108, '#F7EBD3');
+  big(960, 860, 'RA ĐI?', 132, '#F2C14E');
+  txt(svg, 960, 960, 'Một suy ngẫm cho cha mẹ, thời con học cùng AI', { 'font-size': 40, 'font-weight': 400, fill: 'rgba(247,235,211,.75)' });
+}
+paperTexture(svg).setAttribute('width', W);
+document.querySelector('image').setAttribute('height', H);
+window.ready = document.fonts.ready;
+</script>
+</body>
+</html>

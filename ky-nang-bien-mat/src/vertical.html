@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Dọc 9:16</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: radial-gradient(circle at 50% 40%, #4A3E30, #231F1A 75%); font-family: 'Be Vietnam Pro', sans-serif; }
+  #title { position: absolute; top: 150px; left: 60px; right: 60px; text-align: center; color: #F7EBD3; font-weight: 800; font-size: 68px; line-height: 1.15; }
+  #title b { color: #F2C14E; }
+  #title small { display: block; margin-top: 16px; font-size: 32px; font-weight: 400; color: rgba(247,235,211,.7); }
+  #chap { position: absolute; top: 400px; left: 0; right: 0; text-align: center; }
+  #chap span { display: inline-block; padding: 10px 30px; border-radius: 40px; background: #E8743B; color: #fff; font-size: 34px; font-weight: 700; }
+  #band { position: absolute; top: 490px; left: 0; width: 1080px; height: 648px; overflow: hidden; background: #F7EBD3; }
+  #band iframe { position: absolute; top: 0; left: -36px; width: 1920px; height: 1080px; border: 0; transform: scale(.6); transform-origin: 0 0; }
+  #cap { position: absolute; top: 1210px; left: 60px; width: 900px; text-align: center; }
+  #cap span { color: #fff; font-size: 56px; font-weight: 800; line-height: 1.32; text-shadow: 0 3px 0 #000, 0 0 18px rgba(0, 0, 0, .6); }
+</style>
+</head>
+<body>
+<div id="title">KỸ NĂNG NÀO<br>RỒI CŨNG <b>RA ĐI?</b><small>Một suy ngẫm cho cha mẹ</small></div>
+<div id="chap"><span></span></div>
+<div id="band"><iframe id="f"></iframe></div>
+<div id="cap"><span></span></div>
+<script>
+const CHAPTERS = ['1 · Ngày xưa là bao giờ?', '2 · Săn bắt, hái lượm', '3 · Ngựa và giáo mác', '4 · Thời lúa nước',
+  '5 · Lời than nghìn năm', '6 · Con ngựa tiếp theo?', '7 · Những câu hỏi', '8 · Trở về nhà'];
+const f = document.getElementById('f');
+const chapEl = document.querySelector('#chap span'), capEl = document.querySelector('#cap span');
+let inner, last = null, lastChap = null;
+window.ready = new Promise(res => {
+  f.onload = async () => {
+    inner = f.contentWindow;
+    const st = inner.document.createElement('style');
+    st.textContent = '#cap { visibility: hidden !important; }';   // captions are drawn by this page instead
+    inner.document.head.appendChild(st);
+    await inner.document.fonts.ready; await document.fonts.ready;
+    window.DURATION = inner.DURATION;
+    res();
+  };
+  f.src = 'main.html';
+});
+window.render = t => {
+  inner.render(t);
+  const S = inner.eval('SCENES'), Ls = inner.eval('LINES');
+  let k = S.findIndex(s => t >= s.s && t < s.e); if (k < 0) k = S.length - 1;
+  const ch = CHAPTERS[k];
+  if (ch !== lastChap) { chapEl.textContent = ch; lastChap = ch; }
+  const end = t > Ls[Ls.length - 1].e + .8;   // final card: hide the chrome text
+  chapEl.parentNode.style.visibility = end ? 'hidden' : 'visible';
+  const ln = Ls.find(l => t >= l.s - .05 && t <= l.e + .25);
+  const s = ln ? ln.text : '';
+  if (s !== last) { capEl.textContent = s; last = s; }
+};
+</script>
+</body>
+</html>
