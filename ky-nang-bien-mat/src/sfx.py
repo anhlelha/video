@@ -61,7 +61,7 @@ while k < S(2) - .3:
 for i in range(26): add(tick(), Ls(2) + i * .085, .09)
 for i in range(3): add(pop(1200), Ls(2) + .1 + i * .12, .12)
 add(ting(1568), Ls(2) + 2.25, .22)
-add(whoosh(1.4, 1600), Le(4) + .1, .35)
+add(whoosh(1.4, 1600), Le(4) + .1, .25)
 for bar, ch in enumerate([(57, 60, 64), (53, 57, 60), (48, 55, 64), (55, 59, 62)] * 2):
     t0 = 1.0 + bar * 2.6
     if t0 > S(2) - 1: break
@@ -70,7 +70,7 @@ for bar, ch in enumerate([(57, 60, 64), (53, 57, 60), (48, 55, 64), (55, 59, 62)
 # ---------- Scene 2: hunter-gatherers ----------
 d = S(3) - S(2)
 w = lp(noise(d), 450); w *= (0.5 + .5 * np.sin(2 * np.pi * .21 * T(d)) ** 2) * np.minimum(1, T(d) / 1.5) * np.minimum(1, (d - T(d)) / 1.0)
-add(w, S(2), .55)
+add(w, S(2), .3)
 add(thud(70, .6), S(2) + 1.9, .35)
 for i in range(7): add(bird(), Ls(5) + .4 + rng.random() * 9, .05)
 pent = [57, 60, 62, 64, 67, 69, 72]
@@ -96,7 +96,7 @@ while c < g1:
 add(whoosh(.7, 2500), Ls(8) + 3.15, .35)
 add(thud(140, .3), Ls(8) + 4.1, .5)
 t = T(.8); add(np.sin(2 * np.pi * 190 * t + 3 * np.sin(2 * np.pi * 14 * t)) * np.exp(-t * 5), Ls(8) + 4.1, .12)
-add(whoosh(1.8, 600), Le(8) - .1, .7)
+add(whoosh(1.8, 600), Le(8) - .1, .3)
 mel = [72, 76, 79, 76, 77, 74, 71, 74, 72, 76, 79, 84, 79, 76, 72]
 b = Le(8) + 1.3; i = 0
 while b < S(4) - .4:

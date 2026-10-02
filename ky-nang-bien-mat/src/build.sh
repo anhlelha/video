@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 W=${1:-build}; mkdir -p "$W"
 python3 timeline.py
-VOUT=$W/video_noaudio.mp4 node render.js
+[ -n "${SKIP_RENDER:-}" ] || VOUT=$W/video_noaudio.mp4 node render.js
 OUT=$W/sfx.wav python3 sfx.py
 DUR=$(node -e "eval(require('fs').readFileSync('timeline.js','utf8').replace(/const /g,'global.').replace('window.','global.'));console.log(DURATION)")
 OFF=($(node -e "eval(require('fs').readFileSync('timeline.js','utf8').replace(/const /g,'global.').replace('window.','global.'));console.log(LINES.map(l=>Math.round(l.s*1000)).join(' '))"))
