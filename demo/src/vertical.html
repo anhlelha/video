@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Vertical 9:16</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #14161C; font-family: 'Be Vietnam Pro', sans-serif; }
+  #title { position: absolute; top: 150px; left: 60px; right: 60px; text-align: center; color: #F5F1E8; font-weight: 800; font-size: 64px; line-height: 1.15; letter-spacing: .5px; }
+  #title small { display: block; margin-top: 18px; font-size: 34px; font-weight: 400; color: #9AA5B1; letter-spacing: 0; }
+  #chap { position: absolute; top: 395px; left: 0; right: 0; text-align: center; }
+  #chap span { display: inline-block; padding: 10px 30px; border-radius: 40px; background: #E8743B; color: #fff; font-size: 34px; font-weight: 700; }
+  #band { position: absolute; top: 490px; left: 0; width: 1080px; height: 648px; overflow: hidden; background: #F5F1E8; }
+  #band iframe { position: absolute; top: 0; left: -36px; width: 1920px; height: 1080px; border: 0; transform: scale(.6); transform-origin: 0 0; }
+  #cap { position: absolute; top: 1210px; left: 60px; width: 900px; text-align: center; }
+  #cap span { display: inline; color: #fff; font-size: 58px; font-weight: 800; line-height: 1.32; padding: 4px 14px;
+    background: rgba(232, 116, 59, .0); box-decoration-break: clone; -webkit-box-decoration-break: clone;
+    text-shadow: 0 3px 0 #000, 0 0 18px rgba(0, 0, 0, .6); }
+</style>
+</head>
+<body>
+<div id="title">CHIẾC XE LẮP RÁP<br>TRONG MỘT ĐÊM<small>AI đang tiến hoá nhanh cỡ nào?</small></div>
+<div id="chap"><span></span></div>
+<div id="band"><iframe id="f"></iframe></div>
+<div id="cap"><span></span></div>
+<script>
+const params = new URLSearchParams(location.search);
+const PART = params.get('part') || '1';
+const SRC = PART === '1' ? 'scene.html' : 'part2.html';
+const CHAPTERS = PART === '1'
+  ? [[0, '1 · Cái động cơ'], [24.6, '2 · Bốn cái bánh xe']]
+  : [[0, '3 · Cuối nguồn'], [16.0, '4 · Vòng lặp'], [47.2, '5 · Ngày xưa'], [74.6, '6 · Bây giờ'], [114.0, '7 · Câu hỏi mở']];
+const f = document.getElementById('f');
+const chapEl = document.querySelector('#chap span');
+const capEl = document.querySelector('#cap span');
+let CAPS = [], inner = null, last = null, lastChap = null;
+window.ready = new Promise(res => {
+  f.onload = async () => {
+    inner = f.contentWindow;
+    const st = inner.document.createElement('style');
+    st.textContent = '#cap { visibility: hidden !important; }';   // captions are drawn by this page instead
+    inner.document.head.appendChild(st);
+    await inner.document.fonts.ready;
+    await document.fonts.ready;
+    CAPS = inner.eval('CAPS');
+    window.DURATION = PART === '1' ? 56.5 : inner.DURATION;
+    res();
+  };
+  f.src = SRC;
+});
+window.render = t => {
+  inner.render(t);
+  const ch = CHAPTERS.filter(c => t >= c[0]).pop()[1];
+  if (ch !== lastChap) { chapEl.textContent = ch; lastChap = ch; }
+  const c = CAPS.find(([a, b]) => t >= a && t < b);
+  const txt = c ? c[2] : '';
+  if (txt !== last) { capEl.textContent = txt; capEl.style.display = txt ? 'inline' : 'none'; last = txt; }
+};
+</script>
+</body>
+</html>
