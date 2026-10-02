@@ -20,7 +20,7 @@
 <iframe id="f"></iframe>
 <div class="shade" id="shadeTop"></div>
 <div class="title" id="title">CHIẾC XE LẮP RÁP<br>TRONG <b>MỘT ĐÊM</b></div>
-<div class="pill" id="pill"><span>Xe bay tới thiên hà… hay chờ sung rụng?</span></div>
+<div class="pill" id="pill" style="display:none"><span></span></div>
 <script>
 const P = new URLSearchParams(location.search);
 const lerp = (a, b, p) => a + (b - a) * p;
@@ -70,8 +70,8 @@ window.ready = new Promise(res => {
         st.setAttribute('transform', `translate(${x} ${y}) scale(${.5 + q * .9})`);
       });
     }
-    // portrait crop cuts sign ① in half: hide it there
-    if (VERT) [...d.querySelectorAll('text')].filter(e => e.textContent.includes('Cống nạp')).forEach(e => e.parentNode.setAttribute('opacity', 0));
+    // clean cover: hide the road signs
+    [...d.querySelectorAll('text')].filter(e => /[①②③]/.test(e.textContent)).forEach(e => e.parentNode.setAttribute('opacity', 0));
     res();
   };
   f.src = 'part2.html';

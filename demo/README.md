@@ -31,3 +31,4 @@ Toàn bộ thời gian hoạt hình nằm trong hàm `render(t)` của `src/scen
 
 - `thumbnail-9x16.png` (1080×1920, cho TikTok/Reels/Shorts) và `thumbnail-16x9.png` (1920×1080, cho YouTube).
 - Dựng lại: `OUT=demo node demo/src/thumb.js` (lấy khung hình Cảnh 7 lúc xe bay lên thiên hà, đặt lại tư thế xe và thêm chữ).
+- Ảnh bìa không còn ô chữ, chỉ giữ tiêu đề. Cả 3 video (`-full`, `-full-nhe`, `-tiktok-9x16`) đều có 1,5 giây ảnh bìa ở đầu (không tiếng), ghép bằng `bash demo/src/add_cover.sh <ảnh_bìa> <video_vào> <video_ra> [crf]`.
