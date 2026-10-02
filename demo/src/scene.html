@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Scene 1-2</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #F5F1E8; }
+  body { font-family: 'Be Vietnam Pro', sans-serif; }
+  svg { position: absolute; inset: 0; }
+  svg text { font-family: 'Be Vietnam Pro', sans-serif; }
+  #cap { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; pointer-events: none; }
+  #cap span { display: inline-block; max-width: 1500px; padding: 14px 34px; border-radius: 16px;
+    background: rgba(20, 22, 28, .72); color: #fff; font-size: 44px; font-weight: 700; line-height: 1.35; }
+</style>
+</head>
+<body>
+<svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<div id="cap"><span></span></div>
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('stage');
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  (parent || svg).appendChild(e);
+  return e;
+}
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const easeOut = p => 1 - Math.pow(1 - p, 3);
+const easeIn = p => p * p * p;
+const easeInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const easeBack = p => { const c = 1.9; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+function bounce(p) {
+  const n = 7.5625, d = 2.75;
+  if (p < 1 / d) return n * p * p;
+  if (p < 2 / d) return n * (p -= 1.5 / d) * p + .75;
+  if (p < 2.5 / d) return n * (p -= 2.25 / d) * p + .9375;
+  return n * (p -= 2.625 / d) * p + .984375;
+}
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const cam = (g, cx, cy, s) => g.setAttribute('transform', `translate(960 540) scale(${s}) translate(${-cx} ${-cy})`);
+const show = (g, on) => g.setAttribute('display', on ? 'inline' : 'none');
+const C = { cream: '#F5F1E8', silver: '#9AA5B1', silverD: '#5D6773', silverL: '#C3CCD5', orange: '#E8743B',
+  green: '#2DA44E', charcoal: '#2B2D33', gold: '#F2C14E', navy: '#24345C', ink: '#23262E' };
+
+// ---------- reusable drawings ----------
+function makeEngine(parent) {
+  const g = el('g', {}, parent);
+  const exhaust = el('path', { d: 'M190 10 C 260 10, 280 -20, 285 -120', fill: 'none', stroke: '#6B7580', 'stroke-width': 26, 'stroke-linecap': 'round' }, g);
+  el('rect', { x: 268, y: -150, width: 34, height: 30, rx: 6, fill: '#4E5761' }, g);
+  const heads = [];
+  [-165, -45, 75].forEach(x => {
+    const h = el('g', {}, g);
+    el('rect', { x, y: -150, width: 90, height: 82, rx: 12, fill: C.silverL, stroke: C.silverD, 'stroke-width': 6 }, h);
+    for (let i = 0; i < 3; i++) el('line', { x1: x + 12, x2: x + 78, y1: -130 + i * 18, y2: -130 + i * 18, stroke: C.silverD, 'stroke-width': 4, 'stroke-linecap': 'round' }, h);
+    heads.push(h);
+  });
+  el('rect', { x: -200, y: -80, width: 400, height: 185, rx: 20, fill: C.silver, stroke: C.silverD, 'stroke-width': 6 }, g);
+  for (let i = 0; i < 4; i++) el('line', { x1: -170, x2: 170, y1: -45 + i * 34, y2: -45 + i * 34, stroke: '#8794A1', 'stroke-width': 6, 'stroke-linecap': 'round' }, g);
+  el('rect', { x: -172, y: 100, width: 344, height: 52, rx: 14, fill: '#7B8794', stroke: C.silverD, 'stroke-width': 6 }, g);
+  const pulley = el('g', { transform: 'translate(-232 30)' }, g);
+  el('circle', { r: 50, fill: '#6B7580', stroke: C.silverD, 'stroke-width': 6 }, pulley);
+  el('circle', { r: 16, fill: C.orange }, pulley);
+  const pulleyLine = el('line', { x1: 0, y1: -42, x2: 0, y2: 42, stroke: '#4E5761', 'stroke-width': 6 }, pulley);
+  el('circle', { cx: 0, cy: -168, r: 16, fill: C.orange, stroke: '#B85A2B', 'stroke-width': 4 }, g);
+  return { g, heads, pulley, pulleyLine };
+}
+function makeWheel(parent, r, light) {
+  const g = el('g', {}, parent);
+  el('circle', { r, fill: light ? '#4A4E58' : C.charcoal }, g);
+  el('circle', { r: r * .62, fill: light ? '#AEB7C0' : '#D6DCE2' }, g);
+  const spokes = el('g', {}, g);
+  for (let i = 0; i < 5; i++) {
+    const a = i * Math.PI * 2 / 5;
+    el('line', { x1: 0, y1: 0, x2: Math.cos(a) * r * .58, y2: Math.sin(a) * r * .58, stroke: light ? '#7E8892' : '#8E99A4', 'stroke-width': r * .1, 'stroke-linecap': 'round' }, spokes);
+  }
+  el('circle', { r: r * .18, fill: C.orange }, g);
+  return { g, spokes };
+}
+function makeStar(parent, cx, cy, r, fill) {
+  const pts = [];
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r;
+    pts.push((cx + Math.cos(a) * rr).toFixed(1) + ',' + (cy + Math.sin(a) * rr).toFixed(1));
+  }
+  return el('polygon', { points: pts.join(' '), fill, 'stroke-linejoin': 'round' }, parent);
+}
+function makePerson(parent, o) {
+  // front-facing bust: o = {skin, hair, hoodie}
+  const g = el('g', {}, parent);
+  el('path', { d: 'M-70 120 C -70 40, 70 40, 70 120 Z', fill: o.hoodie }, g);
+  el('path', { d: 'M-22 52 L0 78 L22 52', fill: 'none', stroke: 'rgba(255,255,255,.5)', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+  el('circle', { cx: 0, cy: 0, r: 46, fill: o.skin }, g);
+  el('path', { d: 'M-46 -4 C -50 -50, 50 -60, 46 -4 C 30 -28, -20 -32, -46 -4 Z', fill: o.hair }, g);
+  el('circle', { cx: -16, cy: 2, r: 5, fill: C.ink }, g);
+  el('circle', { cx: 16, cy: 2, r: 5, fill: C.ink }, g);
+  const mouth = el('ellipse', { cx: 0, cy: 24, rx: 9, ry: 12, fill: '#7A2E22' }, g);
+  return { g, mouth };
+}
+
+// ---------- SCENE 1: the engine ----------
+const s1 = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: C.cream }, s1);
+const s1cam = el('g', {}, s1);
+const s1shadow = el('ellipse', { cx: 960, cy: 740, rx: 270, ry: 24, fill: 'rgba(0,0,0,.12)' }, s1cam);
+const s1eng = el('g', {}, s1cam);
+const eng1 = makeEngine(s1eng);
+const dust1 = el('g', {}, s1cam);
+const dustBits = [];
+for (let i = 0; i < 14; i++) dustBits.push(el('circle', { r: 10 + rnd(i) * 16, fill: '#D9D0BE' }, dust1));
+const smoke = el('g', {}, s1cam);
+const smokeBits = [];
+for (let i = 0; i < 30; i++) smokeBits.push(el('circle', { r: 20, fill: '#B9B4AA' }, smoke));
+const sticker = el('g', {}, s1eng);
+el('rect', { x: -110, y: -10, width: 220, height: 92, rx: 16, fill: C.orange, stroke: '#fff', 'stroke-width': 6 }, sticker);
+el('text', { x: 0, y: 64, 'text-anchor': 'middle', 'font-size': 66, 'font-weight': 800, fill: '#fff' }, sticker).textContent = 'LLM';
+const chips = [['Claude', 560, 320], ['Gemini', 1360, 320], ['GPT', 1380, 760]].map(([name, x, y]) => {
+  const g = el('g', {}, s1cam);
+  el('rect', { x: -120, y: -40, width: 240, height: 80, rx: 40, fill: '#fff', stroke: C.ink, 'stroke-width': 4 }, g);
+  el('text', { x: 0, y: 16, 'text-anchor': 'middle', 'font-size': 42, 'font-weight': 700, fill: C.ink }, g).textContent = name;
+  el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: '#C9C1AF', 'stroke-width': 4, 'stroke-dasharray': '8 10' }, s1cam);
+  return { g, x, y };
+});
+const gauge = el('g', { transform: 'translate(1420 300)' }, s1cam);
+el('circle', { r: 110, fill: '#fff', stroke: C.ink, 'stroke-width': 6 }, gauge);
+el('path', { d: 'M -78 40 A 88 88 0 1 1 78 40', fill: 'none', stroke: '#E4DED2', 'stroke-width': 14, 'stroke-linecap': 'round' }, gauge);
+const needle = el('line', { x1: 0, y1: 0, x2: -70, y2: 36, stroke: '#D64545', 'stroke-width': 8, 'stroke-linecap': 'round' }, gauge);
+el('circle', { r: 10, fill: C.ink }, gauge);
+el('text', { x: 0, y: 82, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 800, fill: C.ink }, gauge).textContent = '0 km/h';
+const cricket = el('g', {}, s1cam);
+el('ellipse', { cx: 0, cy: 0, rx: 30, ry: 14, fill: '#4F7A3A' }, cricket);
+el('circle', { cx: 30, cy: -4, r: 10, fill: '#4F7A3A' }, cricket);
+el('path', { d: 'M34 -12 Q 60 -50 80 -40 M30 -12 Q 50 -60 66 -58', fill: 'none', stroke: '#4F7A3A', 'stroke-width': 3 }, cricket);
+el('path', { d: 'M-10 6 L -30 26 M5 8 L 0 28 M-20 2 L -46 16', stroke: '#4F7A3A', 'stroke-width': 4, 'stroke-linecap': 'round' }, cricket);
+
+function renderS1(t) {
+  // drop + bounce
+  const dp = seg(t, .2, 1.4);
+  const dropY = t < .2 ? -900 : lerp(-900, 0, bounce(dp));
+  let shake = 0;
+  if (t > 1.0 && t < 1.25) shake = Math.sin(t * 160) * 14 * (1 - seg(t, 1.0, 1.25));
+  // roar
+  const roar = seg(t, 13, 13.3) * (1 - seg(t, 20.2, 20.8));
+  const jx = roar * (Math.sin(t * 61) * 5 + Math.sin(t * 37) * 3);
+  const jy = roar * (Math.sin(t * 53) * 4);
+  s1eng.setAttribute('transform', `translate(${960 + jx} ${560 + dropY + jy + shake})`);
+  const sh = dp >= 1 ? 1 : lerp(.3, 1, clamp((dropY + 900) / 900));
+  s1shadow.setAttribute('rx', 270 * sh); s1shadow.setAttribute('opacity', sh);
+  eng1.heads.forEach((h, i) => h.setAttribute('transform', `translate(0 ${roar * Math.sin(t * 50 + i * 2.1) * 9})`));
+  const idle = t > 2.5 ? (roar > 0 ? t * 900 : t * 120) : 0;
+  eng1.pulleyLine.setAttribute('transform', `rotate(${idle})`);
+  // dust on landing
+  dustBits.forEach((d, i) => {
+    const p = seg(t, 1.0, 1.9), a = (i / dustBits.length) * Math.PI - Math.PI;
+    const dir = i % 2 ? 1 : -1;
+    d.setAttribute('cx', 960 + dir * (200 + p * (120 + rnd(i) * 160)));
+    d.setAttribute('cy', 735 - p * (20 + rnd(i + 9) * 50));
+    d.setAttribute('opacity', p > 0 && p < 1 ? (1 - p) * .9 : 0);
+    void a;
+  });
+  // smoke while roaring
+  smokeBits.forEach((s, i) => {
+    const birth = 13.1 + i * .24, life = 1.6, p = seg(t, birth, birth + life);
+    const alive = t >= birth && p < 1 && birth < 20.4;
+    s.setAttribute('cx', 960 + jx + 287 + p * (60 + rnd(i) * 80));
+    s.setAttribute('cy', 560 + jy - 160 - p * (180 + rnd(i + 3) * 60));
+    s.setAttribute('r', 16 + p * 46);
+    s.setAttribute('opacity', alive ? (1 - p) * .55 : 0);
+  });
+  // sticker
+  const sp = seg(t, 9.55, 9.9);
+  sticker.setAttribute('transform', `translate(0 0) scale(${t < 9.55 ? 0 : easeBack(sp)})`);
+  // chips
+  chips.forEach((c, i) => {
+    const p = seg(t, 10.8 + i * .4, 11.15 + i * .4);
+    c.g.setAttribute('transform', `translate(${c.x} ${c.y}) scale(${p === 0 ? 0 : easeBack(p)})`);
+    c.g.setAttribute('opacity', 1 - seg(t, 12.6, 12.95));
+  });
+  // gauge
+  const gp = seg(t, 17.5, 17.85);
+  gauge.setAttribute('opacity', t < 17.5 ? 0 : (1 - seg(t, 20.2, 20.5)));
+  gauge.setAttribute('transform', `translate(1420 300) scale(${easeBack(gp) || 0})`);
+  needle.setAttribute('transform', `rotate(${roar * Math.sin(t * 40) * 4})`);
+  // cricket hop
+  const cp = seg(t, 21.6, 24.6);
+  const hop = Math.abs(Math.sin(cp * Math.PI * 5)) * 70;
+  cricket.setAttribute('transform', `translate(${lerp(360, 1560, cp)} ${790 - hop}) scale(2)`);
+  cricket.setAttribute('opacity', t > 21.5 ? 1 : 0);
+  // camera
+  let s = 1, cx = 960, cy = 540;
+  if (t < 13) s = lerp(1, 1.08, easeInOut(seg(t, 2, 12.5)));
+  else if (t < 20.4) { s = 1.38; cy = 500; }
+  else { const p = easeInOut(seg(t, 20.4, 21.8)); s = lerp(1.38, .62, p); cy = lerp(500, 600, p); }
+  cam(s1cam, cx, cy, s);
+}
+
+// ---------- SCENE 2a: world map ----------
+const s2a = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: '#1D2333' }, s2a);
+const s2acam = el('g', {}, s2a);
+for (let i = 0; i < 70; i++) el('circle', { cx: rnd(i) * 1920, cy: rnd(i + 70) * 1080, r: 1 + rnd(i + 140) * 2, fill: '#55607A' }, s2acam);
+for (let i = 1; i < 6; i++) el('line', { x1: 0, x2: 1920, y1: i * 180, y2: i * 180, stroke: '#27304A', 'stroke-width': 2 }, s2acam);
+for (let i = 1; i < 10; i++) el('line', { y1: 0, y2: 1080, x1: i * 192, x2: i * 192, stroke: '#27304A', 'stroke-width': 2 }, s2acam);
+const land = { fill: '#34405C', stroke: '#46547A', 'stroke-width': 3, 'stroke-linejoin': 'round' };
+[
+  'M260 250 C 330 170, 560 160, 700 220 C 720 300, 640 330, 600 420 C 560 500, 470 520, 430 470 C 380 410, 300 380, 260 250 Z',
+  'M560 560 C 640 540, 740 590, 730 660 C 720 760, 660 860, 620 900 C 590 820, 560 720, 560 560 Z',
+  'M880 230 C 950 190, 1060 200, 1080 260 C 1060 330, 980 380, 900 360 C 860 320, 860 270, 880 230 Z',
+  'M900 420 C 980 380, 1120 400, 1150 470 C 1160 560, 1100 700, 1030 790 C 980 740, 960 640, 920 560 C 880 510, 870 460, 900 420 Z',
+  'M1090 200 C 1250 140, 1560 160, 1660 240 C 1700 320, 1610 380, 1560 420 C 1500 480, 1440 540, 1400 520 C 1330 470, 1260 500, 1200 460 C 1130 400, 1080 300, 1090 200 Z',
+  'M1500 720 C 1580 680, 1700 700, 1720 770 C 1710 840, 1600 860, 1530 830 C 1490 800, 1480 750, 1500 720 Z'
+].forEach(d => el('path', Object.assign({ d }, land), s2acam));
+[[1470, 590, 30, 14], [1540, 610, 26, 12], [1600, 580, 20, 10], [1660, 470, 14, 26]].forEach(([cx, cy, rx, ry]) => el('ellipse', Object.assign({ cx, cy, rx, ry }, land), s2acam));
+const ripples = [0, 1, 2].map(() => el('circle', { cx: 1440, cy: 500, r: 10, fill: 'none', stroke: C.orange, 'stroke-width': 3 }, s2acam));
+const mapDot = el('circle', { cx: 1440, cy: 500, r: 10, fill: C.orange }, s2acam);
+function renderS2a(t) {
+  const lt = t - 24.6;
+  const on = t > 26.6;
+  mapDot.setAttribute('opacity', on ? (.65 + .35 * Math.sin(t * 9)) : 0);
+  ripples.forEach((r, i) => {
+    const p = ((lt - 2 + i * .45) % 1.35) / 1.35;
+    r.setAttribute('r', 10 + p * 50); r.setAttribute('opacity', on ? (1 - p) * .8 : 0);
+  });
+  const zp = easeIn(seg(t, 27.4, 28.4));
+  cam(s2acam, lerp(960, 1440, easeOut(seg(t, 27.4, 28.2))), lerp(540, 500, easeOut(seg(t, 27.4, 28.2))), lerp(1.02, 9, zp) * lerp(1, 1.04, seg(t, 24.6, 27.4)));
+}
+
+// ---------- SCENE 2b: the room at 2 AM ----------
+const s2b = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: '#2A3047' }, s2b);
+const s2bcam = el('g', {}, s2b);
+el('rect', { x: -200, y: 780, width: 2400, height: 600, fill: '#20253A' }, s2bcam);
+el('rect', { x: 250, y: 160, width: 380, height: 300, rx: 12, fill: '#141A2B', stroke: '#3B4363', 'stroke-width': 12 }, s2bcam);
+el('line', { x1: 440, x2: 440, y1: 160, y2: 460, stroke: '#3B4363', 'stroke-width': 8 }, s2bcam);
+el('circle', { cx: 345, cy: 250, r: 34, fill: '#F2E6B8' }, s2bcam);
+el('circle', { cx: 360, cy: 240, r: 30, fill: '#141A2B' }, s2bcam);
+[[520, 230], [580, 330], [300, 390], [500, 400]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 3, fill: '#F2E6B8' }, s2bcam));
+const clock = el('g', { transform: 'translate(1660 170)' }, s2bcam);
+el('rect', { x: -150, y: -55, width: 300, height: 110, rx: 14, fill: '#141A2B', stroke: '#3B4363', 'stroke-width': 6 }, clock);
+const clockTxt = el('text', { x: 0, y: 22, 'text-anchor': 'middle', 'font-size': 60, 'font-weight': 800, fill: C.orange }, clock);
+// desk + laptop
+const glow = el('ellipse', { cx: 1180, cy: 560, rx: 200, ry: 120, fill: '#7FD3FF', opacity: .12 }, s2bcam);
+el('rect', { x: 860, y: 660, width: 680, height: 26, rx: 6, fill: '#6B4E3A' }, s2bcam);
+el('rect', { x: 900, y: 686, width: 22, height: 120, fill: '#5A4130' }, s2bcam);
+el('rect', { x: 1480, y: 686, width: 22, height: 120, fill: '#5A4130' }, s2bcam);
+el('rect', { x: 1020, y: 646, width: 240, height: 16, rx: 4, fill: '#B8C2CC' }, s2bcam);
+el('polygon', { points: '1240,646 1270,480 1290,480 1262,646', fill: '#B8C2CC' }, s2bcam);
+el('polygon', { points: '1243,640 1271,486 1284,486 1258,640', fill: '#7FD3FF' }, s2bcam);
+el('rect', { x: 1340, y: 600, width: 46, height: 60, rx: 8, fill: C.orange }, s2bcam); // mug
+// chair + engineer (side view, facing right)
+el('rect', { x: 680, y: 560, width: 40, height: 220, rx: 14, fill: '#3B4363' }, s2bcam);
+el('rect', { x: 690, y: 700, width: 200, height: 28, rx: 10, fill: '#3B4363' }, s2bcam);
+el('rect', { x: 780, y: 728, width: 18, height: 70, fill: '#3B4363' }, s2bcam);
+const eng = el('g', {}, s2bcam);
+el('path', { d: 'M760 560 C 760 500, 880 490, 900 560 L 905 710 L 740 710 Z', fill: C.navy }, eng);
+el('path', { d: 'M760 700 L 960 700 L 960 740 L 760 740 Z', fill: '#2E3550' }, eng);
+el('rect', { x: 940, y: 700, width: 30, height: 110, rx: 10, fill: '#2E3550' }, eng);
+const head = el('g', { transform: 'translate(840 450)' }, eng);
+el('path', { d: 'M-70 10 C -80 -60, 40 -90, 70 -20 L 60 40 C 20 60, -50 60, -70 10 Z', fill: C.navy }, head); // hood
+el('circle', { cx: 10, cy: 0, r: 54, fill: '#F1C9A5' }, head);
+el('path', { d: 'M-44 -10 C -50 -70, 60 -80, 64 -20 C 40 -44, -10 -40, -44 -10 Z', fill: '#2B2320' }, head);
+el('rect', { x: 34, y: -12, width: 34, height: 22, rx: 6, fill: 'rgba(127,211,255,.35)', stroke: C.ink, 'stroke-width': 4 }, head);
+el('path', { d: 'M-40 -30 C -30 -90, 50 -90, 56 -40', fill: 'none', stroke: C.charcoal, 'stroke-width': 10 }, head);
+el('rect', { x: -26, y: -24, width: 30, height: 44, rx: 12, fill: C.charcoal }, head);
+const arm = el('g', {}, eng);
+el('path', { d: 'M850 580 C 900 640, 960 650, 1030 640', fill: 'none', stroke: C.navy, 'stroke-width': 34, 'stroke-linecap': 'round' }, arm);
+el('circle', { cx: 1040, cy: 638, r: 16, fill: '#F1C9A5' }, arm);
+const bulb = el('g', { transform: 'translate(870 300)' }, s2bcam);
+el('circle', { r: 90, fill: C.gold, opacity: .25 }, bulb);
+el('circle', { r: 46, fill: C.gold }, bulb);
+el('rect', { x: -20, y: 40, width: 40, height: 30, rx: 6, fill: '#B8C2CC' }, bulb);
+const thought = el('g', { transform: 'translate(1180 300)' }, s2bcam);
+el('circle', { cx: -160, cy: 60, r: 12, fill: '#fff' }, thought);
+el('circle', { cx: -120, cy: 30, r: 18, fill: '#fff' }, thought);
+el('rect', { x: -90, y: -110, width: 360, height: 180, rx: 90, fill: '#fff' }, thought);
+[-20, 60, 140, 220].forEach(x => { const w = makeWheel(thought, 34); w.g.setAttribute('transform', `translate(${x - 30} -20)`); w.spokesRef = w.spokes; thought.__w = (thought.__w || []).concat(w); });
+function renderS2b(t) {
+  const lt = t - 28.4;
+  clockTxt.textContent = (Math.floor(t * 2) % 2 ? '02 00' : '02:00') + ' AM';
+  const typing = t < 30.5 ? 1 : 0;
+  arm.setAttribute('transform', `translate(0 ${typing * Math.abs(Math.sin(t * 22)) * -8})`);
+  head.setAttribute('transform', `translate(840 450) rotate(${t > 30.5 ? -6 * easeOut(seg(t, 30.5, 30.9)) : 0} 10 0)`);
+  glow.setAttribute('opacity', .035 + .015 * Math.sin(t * 7));
+  const bp = seg(t, 30.55, 30.9);
+  bulb.setAttribute('transform', `translate(870 300) scale(${t < 30.55 ? 0 : easeBack(bp)})`);
+  bulb.firstChild.setAttribute('opacity', .2 + .15 * Math.sin(t * 10));
+  const tp = seg(t, 30.8, 31.2);
+  thought.setAttribute('transform', `translate(1180 300) scale(${t < 30.8 ? 0 : easeBack(tp)})`);
+  (thought.__w || []).forEach((w, i) => w.spokes.setAttribute('transform', `rotate(${t * 180 + i * 20})`));
+  cam(s2bcam, 960, 520, lerp(1, 1.07, seg(t, 28.4, 33)));
+  void lt;
+}
+
+// ---------- SCENE 2c: wheels on the engine ----------
+const s2c = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: C.cream }, s2c);
+const s2ccam = el('g', {}, s2c);
+el('line', { x1: -1000, x2: 4000, y1: 812, y2: 812, stroke: '#E2DACB', 'stroke-width': 6 }, s2ccam);
+for (let i = 0; i < 30; i++) el('line', { x1: -800 + i * 160, x2: -760 + i * 160, y1: 840, y2: 840, stroke: '#E8E1D3', 'stroke-width': 6, 'stroke-linecap': 'round' }, s2ccam);
+const dust2 = el('g', {}, s2ccam);
+const dust2Bits = [];
+for (let i = 0; i < 24; i++) dust2Bits.push(el('circle', { r: 14, fill: '#DCD3C2' }, dust2));
+const veh = el('g', {}, s2ccam);
+const backWheels = el('g', {}, veh);
+const vehBody = el('g', {}, veh);
+const eng2 = makeEngine(vehBody);
+const frontWheels = el('g', {}, veh);
+const wheelDefs = [
+  { parent: backWheels, x: -100, y: 150, r: 70, light: true, from: [-700, -500], t0: 33.6 },
+  { parent: backWheels, x: 200, y: 150, r: 70, light: true, from: [800, -520], t0: 34.1 },
+  { parent: frontWheels, x: -150, y: 175, r: 78, light: false, from: [-900, 300], t0: 34.6 },
+  { parent: frontWheels, x: 150, y: 175, r: 78, light: false, from: [900, 360], t0: 35.1 },
+].map(d => Object.assign(d, makeWheel(d.parent, d.r, d.light)));
+const tag = el('g', {}, s2ccam);
+const tagLine = el('line', { stroke: C.ink, 'stroke-width': 4, 'stroke-dasharray': '6 8' }, tag);
+const tagBox = el('g', {}, tag);
+el('rect', { x: -230, y: -44, width: 460, height: 88, rx: 44, fill: C.ink }, tagBox);
+el('text', { x: 0, y: 15, 'text-anchor': 'middle', 'font-size': 42, 'font-weight': 700, fill: '#fff' }, tagBox).textContent = 'Agent / Tool use';
+const sparkle = makeStar(s2ccam, 0, 0, 60, C.gold);
+const speedLines = el('g', {}, s2ccam);
+const speedBits = [0, 1, 2, 3].map(i => el('line', { stroke: '#CFC6B4', 'stroke-width': 8, 'stroke-linecap': 'round' }, speedLines));
+function renderS2c(t) {
+  const rp = easeInOut(seg(t, 38.4, 42.4));
+  const dx = rp * 700;
+  const baseX = 760 + dx, baseY = 600;
+  const rolling = t > 38.4 && t < 42.4;
+  const wob = rolling ? Math.sin(t * 18) * 2.2 : 0;
+  veh.setAttribute('transform', `translate(${baseX} ${baseY + (rolling ? Math.abs(Math.sin(t * 18)) * -6 : 0)}) rotate(${wob}) scale(.8)`);
+  const rot = (dx / 78) * 180 / Math.PI;
+  wheelDefs.forEach(w => {
+    const p = seg(t, w.t0, w.t0 + .5);
+    const e = easeOut(p);
+    const x = lerp(w.x + w.from[0], w.x, e), y = lerp(w.y + w.from[1], w.y, e);
+    w.g.setAttribute('transform', `translate(${x} ${y})`);
+    w.g.setAttribute('opacity', t < w.t0 ? 0 : 1);
+    w.spokes.setAttribute('transform', `rotate(${(1 - e) * 720 + rot})`);
+  });
+  eng2.pulleyLine.setAttribute('transform', `rotate(${t * 300})`);
+  const tg = seg(t, 36.0, 36.35);
+  const tx = baseX - 120 * .8 - 260, ty = 330;
+  tagBox.setAttribute('transform', `translate(${tx} ${ty}) scale(${t < 36 ? 0 : easeBack(tg)})`);
+  tagLine.setAttribute('x1', tx + 100); tagLine.setAttribute('y1', ty + 44);
+  tagLine.setAttribute('x2', baseX - 150 * .8); tagLine.setAttribute('y2', baseY + 175 * .8 - 50);
+  tag.setAttribute('opacity', t < 36 ? 0 : 1 - seg(t, 38.2, 38.5));
+  const sk = seg(t, 38.6, 39.3);
+  sparkle.setAttribute('transform', `translate(${baseX + 120} ${baseY - 230}) scale(${t < 38.6 ? 0 : Math.sin(sk * Math.PI) * 1.2}) rotate(${sk * 90})`);
+  dust2Bits.forEach((d, i) => {
+    const birth = 38.5 + i * .16, p = seg(t, birth, birth + 1);
+    const bx = 760 + easeInOut(seg(birth, 38.4, 42.4)) * 700;
+    d.setAttribute('cx', bx - 180 - p * (40 + rnd(i) * 80));
+    d.setAttribute('cy', 790 - p * (30 + rnd(i + 5) * 40));
+    d.setAttribute('r', 8 + p * 22);
+    d.setAttribute('opacity', t > birth && p < 1 && birth < 42 ? (1 - p) * .8 : 0);
+  });
+  const spd = rolling ? Math.sin(seg(t, 38.4, 42.4) * Math.PI) : 0;
+  speedBits.forEach((l, i) => {
+    l.setAttribute('x1', baseX - 260 - i * 30); l.setAttribute('x2', baseX - 260 - i * 30 - 160 * spd);
+    l.setAttribute('y1', baseY - 100 + i * 60); l.setAttribute('y2', baseY - 100 + i * 60);
+    l.setAttribute('opacity', spd);
+  });
+  cam(s2ccam, 960 + dx * .55, 560, 1);
+}
+
+// ---------- SCENE 2d: repo card + stars ----------
+const s2d = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: C.cream }, s2d);
+const card = el('g', {}, s2d);
+el('rect', { x: -560, y: -230, width: 1120, height: 460, rx: 28, fill: '#fff', stroke: '#D9D2C3', 'stroke-width': 4 }, card);
+el('rect', { x: -500, y: -170, width: 56, height: 68, rx: 8, fill: 'none', stroke: C.ink, 'stroke-width': 6 }, card);
+el('text', { x: -420, y: -118, 'font-size': 50, 'font-weight': 700, fill: '#2F6FEB' }, card).textContent = 'lone-engineer / four-wheels';
+el('text', { x: -500, y: -30, 'font-size': 36, fill: '#57606A' }, card).textContent = 'Lắp 4 bánh xe cho động cơ LLM. Nó chạy được!';
+[['agent', -500], ['tool-use', -330], ['llm', -130]].forEach(([s, x]) => {
+  el('rect', { x, y: 20, width: s.length * 22 + 50, height: 56, rx: 28, fill: '#DDF4FF' }, card);
+  el('text', { x: x + 25, y: 59, 'font-size': 30, 'font-weight': 700, fill: '#0969DA' }, card).textContent = s;
+});
+const starBtn = el('g', { transform: 'translate(240 150)' }, card);
+el('rect', { x: -60, y: -50, width: 380, height: 100, rx: 20, fill: '#F6F8FA', stroke: '#D0D7DE', 'stroke-width': 4 }, starBtn);
+const bigStar = makeStar(starBtn, -6, 0, 30, C.gold);
+el('text', { x: 40, y: 14, 'font-size': 38, 'font-weight': 700, fill: C.ink }, starBtn).textContent = 'Star';
+el('line', { x1: 150, x2: 150, y1: -50, y2: 50, stroke: '#D0D7DE', 'stroke-width': 4 }, starBtn);
+const starCount = el('text', { x: 236, y: 16, 'text-anchor': 'middle', 'font-size': 44, 'font-weight': 800, fill: C.ink }, starBtn);
+const pops = el('g', {}, s2d);
+const popBits = [];
+for (let i = 0; i < 26; i++) {
+  const g = el('g', {}, pops);
+  el('rect', { x: -66, y: -32, width: 132, height: 64, rx: 32, fill: C.green }, g);
+  makeStar(g, -28, 0, 18, '#fff');
+  el('text', { x: 18, y: 13, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 800, fill: '#fff' }, g).textContent = '+1';
+  popBits.push(g);
+}
+function renderS2d(t) {
+  const cp = easeOut(seg(t, 42.4, 43.0));
+  card.setAttribute('transform', `translate(960 ${lerp(900, 500, cp)})`);
+  const sp = seg(t, 44.4, 48.6);
+  const n = t < 44.4 ? 10 : Math.round(10 * Math.pow(5000, easeIn(sp) * .3 + sp * .7));
+  starCount.textContent = n.toLocaleString('vi-VN');
+  const pulse = t > 44.4 && t < 48.8 ? 1 + .12 * Math.abs(Math.sin(t * 14)) : 1;
+  bigStar.setAttribute('transform', `translate(-6 0) scale(${pulse}) translate(6 0)`);
+  popBits.forEach((g, i) => {
+    const birth = 44.4 + 4.2 * Math.pow(i / popBits.length, .8);
+    const p = seg(t, birth, birth + 1.2);
+    const ang = rnd(i) * Math.PI * 2;
+    const x = 960 + Math.cos(ang) * (600 + rnd(i + 2) * 200), y = 500 + Math.sin(ang) * (320 + rnd(i + 4) * 80);
+    g.setAttribute('transform', `translate(${x} ${y - p * 60}) scale(${p > 0 ? easeBack(seg(t, birth, birth + .3)) : 0})`);
+    g.setAttribute('opacity', t > birth && p < 1 ? 1 - seg(t, birth + .8, birth + 1.2) : 0);
+  });
+}
+
+// ---------- SCENE 2e: engineers everywhere ----------
+const s2e = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: C.cream }, s2e);
+const people = [
+  ['Hà Nội', 'Đỉnh!', '#F1C9A5', '#2B2320', C.navy],
+  ['Bangalore', 'Waah!', '#B9825A', '#1E1A18', '#B03A48'],
+  ['Berlin', 'Wahnsinn!', '#F4D3B8', '#C99B53', '#3E7C59'],
+  ['São Paulo', 'Uau!', '#D4A17A', '#3A2618', '#E8743B'],
+  ['Lagos', 'Haba!', '#8A5A3B', '#151212', '#6C4AB6'],
+  ['Tokyo', 'Sugoi!', '#F3D1B0', '#1B1B22', '#2F6FEB'],
+  ['San Francisco', 'Whoa!', '#E9B894', '#7A4A2A', '#5A6472'],
+  ['Seoul', 'Daebak!', '#F2CFB1', '#22202A', '#2DA44E'],
+  ['Warsaw', 'Ojej!', '#F6D9C2', '#B07A3A', '#C9472B'],
+];
+const cells = people.map((p, i) => {
+  const col = i % 3, row = Math.floor(i / 3);
+  const cx = 360 + col * 600, cy = 170 + row * 285;
+  const g = el('g', {}, s2e);
+  const inner = el('g', {}, g);
+  el('rect', { x: -280, y: -128, width: 560, height: 256, rx: 22, fill: '#fff', stroke: '#E2DACB', 'stroke-width': 4 }, inner);
+  const person = makePerson(inner, { skin: p[2], hair: p[3], hoodie: p[4] });
+  person.g.setAttribute('transform', 'translate(-150 -26) scale(.92)');
+  el('text', { x: -150, y: 116, 'text-anchor': 'middle', 'font-size': 26, 'font-weight': 700, fill: '#8A8272' }, inner).textContent = p[0];
+  const bub = el('g', {}, inner);
+  el('rect', { x: -20, y: -100, width: 260, height: 74, rx: 37, fill: C.ink }, bub);
+  el('text', { x: 110, y: -50, 'text-anchor': 'middle', 'font-size': 36, 'font-weight': 800, fill: '#fff' }, bub).textContent = p[1];
+  const w = makeWheel(inner, 48);
+  return { g, inner, cx, cy, bub, w, person };
+});
+const banner = el('g', { transform: 'translate(960 1000)' }, s2e);
+el('rect', { x: -520, y: -48, width: 1040, height: 96, rx: 48, fill: C.ink }, banner);
+const bannerWords = [['Fork', -300, 51.9], ['·', -175, 53.2], ['Clone', -40, 53.2], ['·', 100, 54.6], ['Học theo', 280, 54.6]].map(([s, x, at]) => {
+  const tx = el('text', { x, y: 18, 'text-anchor': 'middle', 'font-size': 52, 'font-weight': 800, fill: s === '·' ? C.orange : '#fff' }, banner);
+  tx.textContent = s; return { tx, at };
+});
+function renderS2e(t) {
+  cells.forEach((c, i) => {
+    const p = seg(t, 49.0 + i * .17, 49.35 + i * .17);
+    c.g.setAttribute('transform', `translate(${c.cx} ${c.cy}) scale(1 ${t < 49 + i * .17 ? 0 : easeBack(p)})`);
+    const bp = seg(t, 49.7 + i * .14, 49.95 + i * .14);
+    c.bub.setAttribute('transform', `scale(${bp ? easeBack(bp) : 0})`);
+    c.bub.setAttribute('opacity', 1 - seg(t, 54.3, 54.6));
+    c.person.mouth.setAttribute('ry', t > 49.7 + i * .14 && t < 54.4 ? 12 + 3 * Math.sin(t * 8 + i) : 4);
+    const wp = seg(t, 54.6 + i * .12, 54.95 + i * .12);
+    c.w.g.setAttribute('transform', `translate(${110} ${-6}) scale(${wp ? easeBack(wp) : 0})`);
+    c.w.spokes.setAttribute('transform', `rotate(${t * 240 + i * 30})`);
+  });
+  bannerWords.forEach(b => b.tx.setAttribute('opacity', t >= b.at ? 1 : 0));
+  banner.setAttribute('opacity', t >= 51.8 ? 1 : 0);
+}
+
+// ---------- END CARD ----------
+const s3 = el('g');
+el('rect', { x: -3000, y: -3000, width: 8000, height: 8000, fill: C.cream }, s3);
+const endTitle = el('text', { x: 960, y: 500, 'text-anchor': 'middle', 'font-size': 84, 'font-weight': 800, fill: C.ink }, s3);
+endTitle.textContent = 'CHIẾC XE LẮP RÁP TRONG MỘT ĐÊM';
+const endBar = el('rect', { x: 760, y: 548, width: 400, height: 10, rx: 5, fill: C.orange }, s3);
+const endSub = el('text', { x: 960, y: 640, 'text-anchor': 'middle', 'font-size': 44, 'font-weight': 400, fill: '#6B6455' }, s3);
+endSub.textContent = 'Bản thử · Cảnh 1–2 · Còn tiếp…';
+function renderS3(t) {
+  const p = easeOut(seg(t, 56.9, 57.6));
+  endTitle.setAttribute('opacity', p); endTitle.setAttribute('transform', `translate(0 ${(1 - p) * 30})`);
+  endBar.setAttribute('transform', `translate(960 0) scale(${easeOut(seg(t, 57.3, 57.9))} 1) translate(-960 0)`);
+  endSub.setAttribute('opacity', easeOut(seg(t, 57.8, 58.4)));
+}
+
+// ---------- transitions + captions ----------
+const wipe = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#1D2333' });
+const fade = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#000', opacity: 0 });
+const WIPES = [ // [time, color]
+  [24.6, '#1D2333'], [33.0, C.cream], [42.4, C.cream], [49.0, C.cream], [56.8, C.cream],
+];
+const CAPS = [
+  [2.2, 4.5, 'Ban đầu, chỉ có một cái động cơ.'],
+  [5.4, 7.9, 'Rất mạnh. Rất đắt.'],
+  [8.6, 12.4, 'Người ta gọi nó là LLM: mô hình ngôn ngữ lớn.'],
+  [15.3, 16.6, 'Nó gầm rất to.'],
+  [17.4, 19.9, 'Nhưng… nó không đi được đâu cả.'],
+  [25.6, 28.1, 'Rồi một đêm, ở đâu đó trên thế giới,'],
+  [28.2, 32.3, 'một kỹ sư AI nghĩ ra một thứ: bốn cái bánh xe.'],
+  [33.5, 35.4, 'Anh ta lắp chúng vào động cơ.'],
+  [36.2, 39.4, 'Và lần đầu tiên, cái động cơ… lăn bánh.'],
+  [42.8, 44.6, 'Anh ta đem khoe lên GitHub.'],
+  [49.2, 51.2, 'Kỹ sư khắp nơi trầm trồ.'],
+];
+const capEl = document.querySelector('#cap span');
+const capBox = document.getElementById('cap');
+let lastCap = null;
+
+function render(t) {
+  const sceneOf = [[0, 24.6, s1], [24.6, 28.4, s2a], [28.4, 33.0, s2b], [33.0, 42.4, s2c], [42.4, 49.0, s2d], [49.0, 56.8, s2e], [56.8, 99, s3]];
+  sceneOf.forEach(([a, b, g]) => show(g, t >= a && t < b));
+  if (t < 24.6) renderS1(t);
+  else if (t < 28.4) renderS2a(t);
+  else if (t < 33.0) renderS2b(t);
+  else if (t < 42.4) renderS2c(t);
+  else if (t < 49.0) renderS2d(t);
+  else if (t < 56.8) renderS2e(t);
+  else renderS3(t);
+  // white flash on the zoom cut into the room
+  let flash = 0;
+  if (t >= 28.1 && t < 28.7) flash = t < 28.4 ? seg(t, 28.1, 28.4) : 1 - seg(t, 28.4, 28.7);
+  // horizontal wipe panel: slides in over 0.25s, out over 0.25s
+  let wx = 1920, wc = '#fff';
+  WIPES.forEach(([at, col]) => {
+    if (t >= at - .25 && t < at + .25) {
+      wc = col;
+      wx = t < at ? lerp(1920, 0, easeIn(seg(t, at - .25, at))) : lerp(0, -1920, easeOut(seg(t, at, at + .25)));
+    }
+  });
+  if (flash > 0) { wc = '#fff'; wx = 0; }
+  wipe.setAttribute('fill', wc); wipe.setAttribute('x', wx);
+  wipe.setAttribute('opacity', flash > 0 ? flash : 1);
+  fade.setAttribute('opacity', seg(t, 60.2, 61.0));
+  const c = CAPS.find(([a, b]) => t >= a && t < b);
+  const txt = c ? c[2] : null;
+  if (txt !== lastCap) { capEl.textContent = txt || ''; lastCap = txt; }
+  capBox.style.display = txt ? 'block' : 'none';
+}
+window.render = render;
+window.DURATION = 61;
+render(0);
+</script>
+</body>
+</html>
