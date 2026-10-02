@@ -3,7 +3,7 @@
 *Một suy ngẫm cho cha mẹ về việc học của con trong thời AI*
 
 - **Khán giả:** Phụ huynh 30–50 tuổi
-- **Thời lượng:** 3:05 (lời thoại khoảng 400 từ, đọc chậm, có khoảng lặng)
+- **Thời lượng:** 3:04 (lời thoại khoảng 400 từ, đọc chậm, có khoảng lặng)
 - **Phong cách:** Hoạt hình 2D minh hoạ, nét vẽ tay ấm, tông giấy cũ; mỗi thời đại một bảng màu riêng
 - **Giọng đọc:** Trầm, chậm, như đang tâm sự, không giảng giải
 - **Nhạc nền:** Piano/guitar mộc, nhẹ; chỉ thêm nhạc cụ dân gian ở cảnh nông nghiệp; **im lặng hoàn toàn** ở câu hỏi cuối
@@ -82,12 +82,12 @@
 
 ---
 
-## CẢNH 8 — TRỞ LẠI PHÒNG KHÁCH (2:41 – 3:05)
+## CẢNH 8 — TRỞ LẠI PHÒNG KHÁCH (2:41 – 3:04)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
 | Phòng khách lúc đầu. Lần này người cha/mẹ không đứng ở cửa nữa, mà kéo ghế ngồi xuống cạnh con. Hai người cùng nhìn vào một trang vở. | "Có lẽ câu hỏi không phải là *con có giỏi như mình ngày xưa không*… mà là *con sẽ cần gì cho ngày mai*." | **Im lặng hoàn toàn.** |
-| Tối dần. Chữ trên nền tối: **"Còn bạn, bạn nghĩ sao?"** | "Và câu trả lời ấy… có khi chúng ta cũng phải học lại, cùng con." | Một nốt piano duy nhất. |
+| Tối dần. Chữ trên nền tối: **"Còn bạn, bạn nghĩ sao?"** | "Và câu trả lời ấy… có khi chúng ta cũng phải học lại…" | Một nốt piano duy nhất. |
 
 ---
 

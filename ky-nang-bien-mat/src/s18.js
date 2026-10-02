@@ -36,8 +36,7 @@ function buildRoom(parent) {
   el('path', { d: 'M1570 270 L 1640 300 L 1640 760 L 1570 780 Z', fill: '#A8744A' }, g);
   const people = el('g', {}, g);
   const dad = makeFigure(people, DAD); dad.g.setAttribute('transform', 'translate(1690 780)');
-  const kid = makeFigure(people, KID); kid.g.setAttribute('transform', 'translate(930 700) scale(.92)');
-  pose(kid, { aL: 20, aR: -20 });
+  const kid = makeFigure(people, KID); kid.g.setAttribute('transform', 'translate(990 700) scale(.92)');
   // desk lamp + glow
   const glow = el('ellipse', { cx: 760, cy: 560, rx: 520, ry: 330, fill: radGrad([[0, '#FFE7A8', .65], [1, '#FFE7A8', 0]]) }, g);
   el('rect', { x: 690, y: 552, width: 90, height: 16, rx: 6, fill: '#3C4A63' }, g);
@@ -48,7 +47,7 @@ function buildRoom(parent) {
   el('rect', { x: 560, y: 690, width: 800, height: 120, fill: '#8E5E3A' }, g);
   el('rect', { x: 590, y: 810, width: 40, height: 120, fill: '#7A4E2E' }, g); el('rect', { x: 1290, y: 810, width: 40, height: 120, fill: '#7A4E2E' }, g);
   // notebook
-  const nb = el('g', { transform: 'translate(990 625)' }, g);
+  const nb = el('g', { transform: 'translate(1030 625)' }, g);
   el('path', { d: 'M-150 -50 L 150 -50 L 160 50 L -160 50 Z', fill: '#FFFDF6', stroke: '#9AA5B1', 'stroke-width': 3 }, nb);
   el('line', { x1: 0, y1: -50, x2: 0, y2: 50, stroke: '#9AA5B1', 'stroke-width': 3 }, nb);
   txt(nb, -78, -18, 'x² + 3x = 10', { 'font-size': 20, fill: '#24345C' });
@@ -58,27 +57,34 @@ function buildRoom(parent) {
     nbLines.push(ln);
   }
   const scrib = el('path', { d: 'M-130 10 q 10 -10 20 0 t 20 0 t 20 0 t 20 0 M-130 30 q 10 -10 20 0 t 20 0', fill: 'none', stroke: '#9AA5B1', 'stroke-width': 3 }, nb);
-  // kid's hands on desk + pencil + phone
-  const handL = el('g', {}, g);
-  el('rect', { x: 700, y: 640, width: 100, height: 34, rx: 16, fill: KID.shirt, transform: 'rotate(-12 800 657)' }, handL);
-  el('circle', { cx: 802, cy: 648, r: 20, fill: KID.skin }, handL);
+  // kid's arms: one continuous sleeve from each shoulder down to the hand on the desk
+  show(kid.armL, false); show(kid.armR, false);
+  const sleeve = { fill: 'none', stroke: KID.shirt, 'stroke-width': 28, 'stroke-linecap': 'round' };
+  const armL = el('path', sleeve, g), armR = el('path', sleeve, g);
+  const handL = el('circle', { r: 19, fill: KID.skin }, g);
   const handR = el('g', {}, g);
-  el('rect', { x: 1100, y: 640, width: 140, height: 36, rx: 16, fill: KID.shirt, transform: 'rotate(20 1100 658)' }, handR);
   const pencil = el('g', {}, handR);
-  el('line', { x1: 1092, y1: 652, x2: 1050, y2: 590, stroke: '#F2C14E', 'stroke-width': 10, 'stroke-linecap': 'round' }, pencil);
-  el('line', { x1: 1050, y1: 590, x2: 1043, y2: 580, stroke: '#2B2620', 'stroke-width': 6, 'stroke-linecap': 'round' }, pencil);
-  el('circle', { cx: 1096, cy: 654, r: 22, fill: KID.skin }, handR);
-  const phone = el('g', {}, g);
-  el('rect', { x: -26, y: -46, width: 52, height: 92, rx: 9, fill: '#2B2620' }, phone);
-  const screen = el('rect', { x: -21, y: -38, width: 42, height: 74, rx: 4, fill: '#8FD3F4' }, phone);
-  el('circle', { cx: 0, cy: 34, r: 22, fill: KID.skin }, phone);
+  el('line', { x1: 0, y1: 0, x2: -36, y2: -62, stroke: '#F2C14E', 'stroke-width': 10, 'stroke-linecap': 'round' }, pencil);
+  el('line', { x1: -36, y1: -62, x2: -42, y2: -72, stroke: '#2B2620', 'stroke-width': 6, 'stroke-linecap': 'round' }, pencil);
+  const phone = el('g', {}, handR);
+  el('rect', { x: -26, y: -96, width: 52, height: 92, rx: 9, fill: '#2B2620' }, phone);
+  const screen = el('rect', { x: -21, y: -88, width: 42, height: 74, rx: 4, fill: '#8FD3F4' }, phone);
+  el('circle', { r: 21, fill: KID.skin }, handR);
+  // place hands; arms follow from the shoulders (kid at x 990, scale .92 -> shoulders at 990±46, y 472)
+  function arms(lx, ly, rx, ry, rr) {
+    armL.setAttribute('d', `M944 478 Q 880 575 ${lx} ${ly}`);
+    armR.setAttribute('d', `M1036 478 Q 1092 575 ${rx} ${ry}`);
+    handL.setAttribute('cx', lx); handL.setAttribute('cy', ly);
+    tr(handR, rx, ry, rr || 0);
+  }
+  arms(868, 664, 1085, 632);
   // timer badge
   const timer = el('g', {}, g);
   el('rect', { x: -95, y: -40, width: 190, height: 80, rx: 40, fill: '#2B2620' }, timer);
   const timerT = txt(timer, 18, 16, '0:00', { 'font-size': 44, fill: '#FFFDF6', 'font-weight': 800 });
   el('circle', { cx: -55, cy: 0, r: 20, fill: 'none', stroke: '#F2C14E', 'stroke-width': 5 }, timer);
   const timerHand = el('line', { x1: -55, y1: 0, x2: -55, y2: -14, stroke: '#F2C14E', 'stroke-width': 4, 'stroke-linecap': 'round' }, timer);
-  return { g, hr, mn, dad, kid, people, glow, nbLines, scrib, handR, pencil, phone, screen, timer, timerT, timerHand };
+  return { g, hr, mn, dad, kid, people, glow, nbLines, scrib, arms, pencil, phone, screen, timer, timerT, timerHand };
 }
 
 // ---------- Scene 1 ----------
@@ -95,10 +101,9 @@ function buildRoom(parent) {
     // pencil tapping, then phone
     const usingPhone = t2 > 0;
     show(R.pencil, !usingPhone);
-    R.handR.setAttribute('transform', usingPhone ? 'translate(0 0)' : `rotate(${Math.max(0, Math.sin(t * 7)) * -4} 1096 654)`);
     show(R.phone, usingPhone);
-    const lift = easeOut(seg(t2, 0, .4));
-    tr(R.phone, 1100, lerp(660, 600, lift), lerp(10, -8, lift));
+    const lift = easeOut(seg(t2, 0, .4)), tap = usingPhone ? 0 : Math.max(0, Math.sin(t * 7)) * 8;
+    R.arms(868, 664, lerp(1085, 1070, lift), lerp(632 - tap, 600, lift), lerp(0, -6, lift));
     R.screen.setAttribute('fill', Math.floor(t * 6) % 2 && t2 < 2.4 ? '#BDE7FA' : '#8FD3F4');
     R.nbLines.forEach((ln, i) => ln.setAttribute('x2', 14 + 120 * seg(t2, .3 + i * .4, .7 + i * .4)));
     show(R.timer, t2 > -.1 && t3 < .3); op(R.timer, seg(t2, -.1, .2));
@@ -129,9 +134,7 @@ function buildRoom(parent) {
   const g = el('g', {}, svg); const world = el('g', {}, g);
   const R = buildRoom(world);
   show(R.timer, false); show(R.phone, false); R.nbLines.forEach(l => l.setAttribute('x2', 134));
-  // move the kid a little left so dad fits beside
-  R.kid.g.setAttribute('transform', 'translate(925 700) scale(.92)');
-  const chair = el('rect', { x: 1110, y: 520, width: 150, height: 40, rx: 10, fill: '#8E5E3A' }, world);
+    const chair = el('rect', { x: 1110, y: 520, width: 150, height: 40, rx: 10, fill: '#8E5E3A' }, world);
   R.g.insertBefore(chair, R.people);
   const dim = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#1A1612' }, g);
   const card = el('g', {}, g);
@@ -141,7 +144,7 @@ function buildRoom(parent) {
   SC[8] = ({ g, render(t, lt) {
     const t25 = L(t, 25), e27 = LE(t, 27);
     const mins = t * .5; R.mn.setAttribute('transform', `rotate(${mins * 6})`); R.hr.setAttribute('transform', `rotate(${120 + mins * .5})`);
-    show(R.pencil, true); R.handR.setAttribute('transform', `rotate(${Math.max(0, Math.sin(t * 2)) * -3} 1096 654)`);
+    show(R.pencil, true); R.arms(868, 664, 1085 + Math.sin(t * 1.5) * 10, 632 - Math.max(0, Math.sin(t * 6)) * 4 * (1 - seg(lt, 3, 4)));
     // dad walks in from the door, sits beside the kid
     const w = easeInOut(seg(lt, .3, 3.0)), sit = easeInOut(seg(lt, 3.0, 3.8));
     const x = lerp(1690, 1190, w);

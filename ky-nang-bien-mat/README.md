@@ -1,6 +1,6 @@
 # Video "Kỹ năng nào rồi cũng ra đi?"
 
-Video hoạt hình 3:05 cho phụ huynh 30–50 tuổi, kết thúc để mở.
+Video hoạt hình 3:04 cho phụ huynh 30–50 tuổi, kết thúc để mở.
 
 | File | Nội dung |
 |---|---|

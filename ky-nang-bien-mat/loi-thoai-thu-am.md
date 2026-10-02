@@ -1,6 +1,6 @@
 # LỜI THOẠI THU ÂM: "KỸ NĂNG NÀO RỒI CŨNG RA ĐI?"
 
-- **Tổng lời thoại:** khoảng 400 từ, 27 câu. Giọng đọc mất khoảng 2:28. Cộng các khoảng lặng và đoạn chỉ có hình, tổng video là **3:05**.
+- **Tổng lời thoại:** khoảng 400 từ, 27 câu. Giọng đọc mất khoảng 2:28. Cộng các khoảng lặng và đoạn chỉ có hình, tổng video là **3:04**.
 - **Cách đọc chung:** trầm, chậm, như đang tâm sự với một phụ huynh khác. Không giảng giải, không trách móc. Chậm dần từ Cảnh 6, chậm nhất ở Cảnh 7–8.
 - **Bản dựng thử** dùng giọng máy `vi-VN-NamMinhNeural` (edge-tts). Khi thu giọng người thật, giữ các mốc thời gian bên dưới để khớp hình.
 
@@ -149,7 +149,7 @@
 
 ---
 
-## CẢNH 8: TRỞ LẠI PHÒNG KHÁCH (2:41 – 3:05)
+## CẢNH 8: TRỞ LẠI PHÒNG KHÁCH (2:41 – 3:04)
 
 `[nghỉ 3s]`: người cha bước vào, ngồi xuống cạnh con
 
@@ -162,6 +162,6 @@
 `[nghỉ 1s]`
 
 > `@2:55` *(nhỏ dần, gần như thì thầm)*
-> Và câu trả lời ấy… / có khi chúng ta cũng phải **học lại**, // cùng con.
+> Và câu trả lời ấy… / có khi chúng ta cũng phải **học lại**…
 
 `[nghỉ 5s]`: màn hình tối, chữ "Còn bạn, bạn nghĩ sao?", một nốt piano

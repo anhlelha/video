@@ -1,6 +1,6 @@
 # STORYBOARD: "KỸ NĂNG NÀO RỒI CŨNG RA ĐI?"
 
-- **Khung hình:** 1920×1080, 30 fps, 3:05. Ảnh dưới đây chụp trực tiếp từ bản dựng (`src/main.html`).
+- **Khung hình:** 1920×1080, 30 fps, 3:04. Ảnh dưới đây chụp trực tiếp từ bản dựng (`src/main.html`).
 - **Mô-típ:** mỗi thời đại mở đầu bằng một **vòng tròn cận cảnh bàn tay** (dấu chân thú → dây cương → nắm thóc → bút chì → điện thoại), rồi vòng tròn nở ra để vào cảnh rộng.
 - **Bảng màu:** phòng khách vàng ấm · săn bắt nâu đất · ngựa đỏ son · lúa nước xanh lá · Hy Lạp trắng đá · hiện tại kem nhạt · câu hỏi nâu tối.
 
