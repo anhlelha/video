@@ -26,7 +26,7 @@
 | Zoom ra bản đồ thế giới. Một chấm sáng nhấp nháy ở một góc nhỏ. Zoom vào: một kỹ sư đeo tai nghe, mặc hoodie, ngồi trong phòng trọ lúc 2h sáng. | "Rồi một đêm, ở đâu đó trên thế giới, một kỹ sư AI nghĩ ra một thứ: bốn cái bánh xe." | Tiếng gõ phím lạch cạch. |
 | Kỹ sư lắp 4 bánh xe vào động cơ. Chiếc "xe" thô sơ lăn được vài mét. Nhãn bánh xe: **Agent / Tool use**. | "Anh ta lắp chúng vào động cơ. Và lần đầu tiên, cái động cơ… lăn bánh." | Tiếng "ting!" |
 | Kỹ sư đẩy lên GitHub. Biểu tượng ⭐ star bắt đầu tăng: 10 → 1.000 → 50.000. | "Anh ta đem khoe lên GitHub." | Tiếng thông báo dồn dập. |
-| Hàng trăm kỹ sư khắp các châu lục quay đầu nhìn, há hốc mồm, rồi bắt đầu fork, tự lắp bánh xe cho mình. | "Kỹ sư khắp nơi trầm trồ. Fork. Clone. Học theo." | Tiếng "wow" đa ngôn ngữ chồng lên nhau. |
+| Hàng trăm kỹ sư khắp các châu lục quay đầu nhìn, há hốc mồm, rồi bắt đầu fork và **sáng tạo bánh xe theo kiểu riêng của mình**: bánh gai, bánh xích, bánh đôi, bánh lục giác, bánh phát sáng… mỗi nơi một kiểu. | "Kỹ sư khắp nơi trầm trồ. Fork. Clone. Học theo." | Tiếng "wow" đa ngôn ngữ chồng lên nhau. |
 
 ---
 
@@ -34,7 +34,7 @@
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
-| Camera trượt theo dòng sông ý tưởng chảy xuôi. Cuối sông là các nhà máy lớn khổng lồ mang logo các nhà cung cấp LLM. | "Và ở cuối nguồn, các nhà cung cấp LLM đứng chờ." | Nhạc trầm xuống, có chút "bí hiểm". |
+| Camera trượt theo dòng sông ý tưởng chảy xuôi, trên sông trôi **đủ kiểu bánh xe khác nhau** từ khắp nơi đổ về. Cuối sông là các nhà máy lớn khổng lồ mang logo các nhà cung cấp LLM. | "Và ở cuối nguồn, các nhà cung cấp LLM đứng chờ." | Nhạc trầm xuống, có chút "bí hiểm". |
 | Cánh tay robot từ nhà máy vươn ra, gắp "ý tưởng bánh xe", lắp vào động cơ chính hãng, sơn bóng, dán logo. | "Họ lấy ý tưởng bánh xe, lắp vào động cơ của mình…" | Tiếng dây chuyền sản xuất. |
 | Các chiếc xe chính hãng lên bục showroom, đèn sân khấu, bảng giá "$20/tháng". Các hãng đứng cạnh nhau, liếc nhau. | "…và đem bán ra, cạnh tranh nhau." | Tiếng vỗ tay, flash máy ảnh. |
 
@@ -50,7 +50,7 @@
 | Bàn tay khổng lồ của nhà cung cấp lướt qua, chọn cái vỏ đẹp nhất, lắp vào xe. Những cái vỏ còn lại nằm chỏng chơ. | "…nhà cung cấp chọn cái đẹp nhất cho mình." | Tiếng "click" chọn. |
 | Tua nhanh: **đèn pha** (nhãn: Memory) → **phanh** (Guardrails) → **đèn hậu** (Observability) → **gương chiếu hậu** (Reflection) → **GPS** (MCP / kết nối) → **cốp xe** (Skills / Plugins)… | "Rồi đèn pha. Phanh xe. Đèn hậu. Gương. Bản đồ. Cốp xe…" | Mỗi bộ phận một tiếng "ting" — dồn dập như súng máy. |
 | Mỗi lần: kỹ sư tạo ra → GitHub sáng → nhà máy gắp → xe chính hãng cập nhật "v2.1… v2.2… v2.3…". | "Kỹ sư làm. Cộng đồng khen. Nhà cung cấp lấy. Lặp lại." | |
-| Đồng hồ ở góc màn hình: kim quay vèo vèo. Chữ hiện: **Giờ. Ngày. Tuần.** | "Mỗi vòng lặp như vậy, giờ chỉ tính bằng giờ. Bằng ngày." | Nhạc đạt đỉnh rồi **cắt đột ngột**. |
+| Đồng hồ ở góc màn hình: kim quay vèo vèo. Chữ lần lượt đập vào: **NGÀY.** rồi **GIỜ.** | "Mỗi vòng lặp như vậy, giờ chỉ tính bằng ngày. Rồi bằng giờ." | Nhạc đạt đỉnh rồi **cắt đột ngột**. |
 
 ---
 
@@ -89,7 +89,7 @@
 | Nhạc tắt. Quay lại người kỹ sư ở Cảnh 2, phòng trọ, 2h sáng. Anh ta nhìn màn hình, nơi chiếc bánh xe của mình đang chạy trên xe của hãng khác. | "Vậy thì… chúng ta làm gì đây?" | Im lặng, chỉ còn tiếng quạt máy tính. |
 | **Ngã ba đường.** Ba biển chỉ dẫn hiện lần lượt: | | Mỗi biển một nốt piano. |
 | Biển 1: Kỹ sư vui vẻ làm đồ chơi, đặt lên băng chuyền chạy thẳng vào nhà máy của hãng lớn. | "Làm cho vui… và cống nạp cho các nhà cung cấp LLM?" | |
-| Biển 2: Kỹ sư tự dựng một xưởng nhỏ, logo riêng, động cơ có thể thay thế. Nhãn: **Agentic Platform của riêng mình**. | "Xây hệ thống agentic platform của riêng mình?" | |
+| Biển 2: Kỹ sư tự làm một chiếc xe đặc biệt: **chiếc xe bay** mơ ước từ thuở ấu thơ. Trên trời hiện ra một dải thiên hà; chiếc xe cất cánh, bay vút về phía thiên hà xa xôi. | "Tự làm một chiếc xe thật đặc biệt: chiếc xe bay mơ ước từ thuở ấu thơ, để bay tới thiên hà xa xôi?" | Tiếng động cơ cất cánh, chuỗi nốt nhạc lấp lánh. |
 | Biển 3: Một người nằm võng dưới gốc cây sung, há miệng chờ quả rụng. | "Hay cứ… nằm im và chờ sung rụng?" | Một quả sung rơi "bộp" bên cạnh, trượt. (hài nhẹ) |
 | Màn hình đen. Chữ trắng hiện chậm: **"Bạn chọn con đường nào?"** | "Bạn chọn con đường nào?" | Một nốt nhạc ngân dài rồi tắt. |
 | Logo kênh / CTA: "Bình luận lựa chọn của bạn bên dưới 👇" | | |

@@ -92,7 +92,7 @@
 `[nghỉ 2s]`
 
 > *(nhấn từng chữ)*
-> Mỗi vòng lặp như vậy, / giờ chỉ tính bằng **giờ**. // Bằng **ngày**.
+> Mỗi vòng lặp như vậy, / giờ chỉ tính bằng **ngày**. // Rồi bằng **giờ**.
 
 `[nghỉ 2s]`: nhạc cắt đột ngột
 
@@ -159,7 +159,8 @@
 
 `[nghỉ 2s]`: biển chỉ dẫn số 2
 
-> Xây hệ thống agentic platform / **của riêng mình**?
+> *(mơ màng, sáng lên dần)*
+> Tự làm một chiếc xe **thật đặc biệt**: // chiếc **xe bay** mơ ước từ thuở ấu thơ, / để bay tới **thiên hà xa xôi**?
 
 `[nghỉ 2s]`: biển chỉ dẫn số 3
 
@@ -177,6 +178,6 @@
 
 ## GHI CHÚ CHO NGƯỜI ĐỌC
 
-1. **Đọc thuật ngữ tiếng Anh:** "LLM" đọc là *en-en-em*; "GitHub", "Fork", "Clone", "COBOL" đọc theo tiếng Anh; "agentic platform" đọc là *ơ-gen-tíc pla-phom*.
+1. **Đọc thuật ngữ tiếng Anh:** "LLM" đọc là *en-en-em*; "GitHub", "Fork", "Clone", "COBOL" đọc theo tiếng Anh.
 2. **Thu từng cảnh thành file riêng** (`VO_C1.wav` … `VO_C7.wav`), mỗi cảnh thu 2–3 lần, để dựng dễ căn nhịp.
 3. **Nên thu lời thoại trước khi làm hình động.** Timing thật của giọng đọc sẽ quyết định độ dài từng shot trong `storyboard.md`.
