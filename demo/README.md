@@ -21,3 +21,8 @@ Toàn bộ thời gian hoạt hình nằm trong hàm `render(t)` của `src/scen
 - Âm thanh Cảnh 3–7: `OUT=sfx2.wav python3 src/sfx2.py`; giọng đọc ở `src/vo2/` (câu thoại trong `src/vo2/lines.txt`).
 - Mốc đặt giọng đọc Cảnh 3–7 (giây, tính từ đầu Cảnh 3): 0.8, 5.6, 10.6, 16.4, 22.0, 25.2, 34.6, 41.6, 48.0, 50.6, 57.8, 64.2, 75.0, 81.6, 86.6, 93.4, 104.6, 116.6, 121.0, 125.0, 131.8, 137.2.
 - Các kiểu bánh xe (cổ điển, gai, xích, đôi, lục giác, neon, cánh quạt, ngôi sao, vuông) nằm trong `src/wheels.js`.
+
+## Bản dọc TikTok 9:16: `chiec-xe-lap-rap-tiktok-9x16.mp4` (1080×1920, 3:21)
+
+- Bố cục: tiêu đề cố định ở trên, nhãn chương (1–7), khung hình 16:9 thu nhỏ ở giữa (cắt 60px mỗi bên), phụ đề chữ to bên dưới. Chừa vùng trên/dưới/phải cho giao diện TikTok.
+- Dựng: `PART=1 VOUT=v1.mp4 node src/render_v.js`, `PART=2 VOUT=v2.mp4 node src/render_v.js`, rồi nối 2 phần và lấy âm thanh từ `chiec-xe-lap-rap-full.mp4`.
