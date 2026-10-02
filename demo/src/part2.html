@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Scene 3-7</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #F5F1E8; }
+  body { font-family: 'Be Vietnam Pro', sans-serif; }
+  svg { position: absolute; inset: 0; }
+  svg text { font-family: 'Be Vietnam Pro', sans-serif; }
+  #cap { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; pointer-events: none; }
+  #cap span { display: inline-block; max-width: 1500px; padding: 14px 34px; border-radius: 16px;
+    background: rgba(20, 22, 28, .72); color: #fff; font-size: 44px; font-weight: 700; line-height: 1.35; }
+</style>
+</head>
+<body>
+<svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="oldfilm" x="0" y="0" width="100%" height="100%">
+      <feColorMatrix type="matrix" values="0.36 0.62 0.12 0 0.02  0.32 0.56 0.11 0 0.01  0.26 0.46 0.09 0 0  0 0 0 1 0"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence id="grainTurb" type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="1"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity=".75"/>
+    </radialGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3B3F6B"/>
+      <stop offset="55%" stop-color="#C8607A"/>
+      <stop offset="100%" stop-color="#F2A65A"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFE08A" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#FFE08A" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
+<div id="cap"><span></span></div>
+<script src="common.js"></script>
+<script>
+const SCENES = [];   // {a, b, g, r}
+function scene(a, b, bg) {
+  const g = el('g');
+  el('rect', { x: -4000, y: -4000, width: 10000, height: 10000, fill: bg }, g);
+  const o = { a, b, g, r: () => {} };
+  SCENES.push(o);
+  return o;
+}
+// side-view car facing right. origin = ground centre
+function makeCar(parent, color, opts = {}) {
+  const g = el('g', {}, parent);
+  const trunk = el('g', {}, g);
+  const trunkLid = el('path', { d: 'M-300 -20 L-300 -50 C-290 -62 -260 -64 -230 -64 L-150 -66 L-150 -20 Z', fill: color, stroke: 'rgba(0,0,0,.25)', 'stroke-width': 4 }, trunk);
+  const body = el('path', { d: 'M-300 30 L-300 -20 L-150 -20 L-150 -66 C-110 -125 -60 -145 0 -145 L90 -145 C140 -145 175 -112 205 -72 L275 -62 C305 -56 315 -30 315 0 L315 30 Z', fill: color, stroke: 'rgba(0,0,0,.25)', 'stroke-width': 4 }, g);
+  el('path', { d: 'M-128 -72 C-95 -118 -55 -130 -5 -130 L-5 -72 Z', fill: '#CFE9F7' }, g);
+  el('path', { d: 'M10 -72 L10 -130 L85 -130 C125 -130 150 -105 175 -72 Z', fill: '#CFE9F7' }, g);
+  el('line', { x1: -300, x2: 315, y1: -10, y2: -10, stroke: 'rgba(255,255,255,.35)', 'stroke-width': 8 }, g);
+  const wheels = [-180, 190].map(x => { const w = makeWheel(g, 58); w.g.setAttribute('transform', `translate(${x} 30)`); return w; });
+  return { g, body, trunk, trunkLid, wheels };
+}
+function makeFactory(parent, x, y, w, h) {
+  const g = el('g', { transform: `translate(${x} ${y})` }, parent);
+  el('rect', { x: w * .62, y: -h - 120, width: 46, height: 150, fill: '#3A3D45' }, g);
+  let d = `M0 0 L0 ${-h}`;
+  const teeth = 3, tw = w / teeth;
+  for (let i = 0; i < teeth; i++) d += ` L${i * tw + tw} ${-h - 60} L${i * tw + tw} ${-h}`;
+  d += ` L${w} 0 Z`;
+  el('path', { d, fill: C.charcoal }, g);
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++)
+    el('rect', { x: 24 + c * (w - 48) / 4, y: -h + 40 + r * 70, width: (w - 48) / 4 - 18, height: 40, rx: 4, fill: C.gold, opacity: .9 }, g);
+  return g;
+}
+</script>
+<script src="part2_s34.js"></script>
+<script src="part2_s5.js"></script>
+<script src="part2_s67.js"></script>
+<script>
+const wipe = el('rect', { x: 1920, y: 0, width: 1920, height: 1080, fill: '#fff' });
+const fade = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#000', opacity: 0 });
+const WIPES = [[16.0, C.cream], [25.0, C.cream], [34.4, C.cream], [74.6, C.cream], [86.4, '#1F4E79'],
+  [93.4, '#E9E2D3'], [104.4, C.cream], [119.4, '#C8607A'], [138.6, C.cream]];
+const CAPS = [
+  [1.0, 5.4, 'Và ở cuối nguồn, các nhà cung cấp LLM… đứng chờ.'],
+  [5.8, 9.9, 'Họ lấy ý tưởng bánh xe, lắp vào động cơ của mình…'],
+  [10.8, 13.6, '…và đem bán ra, cạnh tranh nhau.'],
+  [16.6, 19.3, 'Rồi các kỹ sư lại tiếp tục sáng tạo.'],
+  [19.8, 21.8, 'Nhiều người làm thân vỏ…'],
+  [22.2, 24.7, '…nhà cung cấp chọn cái đẹp nhất cho mình.'],
+  [25.4, 27.2, 'Rồi đèn pha.'], [27.2, 28.6, 'Rồi đèn pha. Phanh xe.'], [28.6, 30.0, 'Rồi đèn pha. Phanh xe. Đèn hậu.'],
+  [30.0, 31.3, 'Rồi đèn pha. Phanh xe. Đèn hậu. Gương.'], [31.3, 32.8, 'Rồi đèn pha. Phanh xe. Đèn hậu. Gương. Bản đồ.'],
+  [32.8, 34.3, 'Rồi đèn pha. Phanh xe. Đèn hậu. Gương. Bản đồ. Cốp xe…'],
+  [41.9, 43.3, 'Mỗi vòng lặp như vậy,'], [43.4, 46.6, 'giờ chỉ tính bằng giờ. Bằng ngày.'],
+  [48.2, 50.3, 'So với ngày xưa… thì sao?'],
+  [50.8, 53.2, 'Thời công nghiệp ô tô, phải mất hàng năm,'],
+  [53.3, 56.9, 'thậm chí hàng chục năm, mới tiến hoá ra một chức năng.'],
+  [58.0, 60.9, 'Rồi có người phát minh ra cần gạt nước chạy gián đoạn:'],
+  [61.0, 62.7, 'gạt… nghỉ… rồi gạt.'],
+  [64.4, 65.9, 'Ford đưa nó lên xe.'],
+  [66.6, 70.4, 'Và thế là một vụ kiện bằng sáng chế kéo dài hơn chục năm.'],
+  [75.2, 76.5, 'Bây giờ thì sao?'],
+  [77.3, 81.1, 'Mới năm trước, còn cả những công ty chuyên làm slide bằng AI.'],
+  [81.9, 86.0, 'Năm nay, nó là tính năng mặc định của Claude, của ChatGPT.'],
+  [86.8, 90.0, 'Thậm chí không chỉ là sản phẩm, mà cả phương pháp luận,'],
+  [90.1, 92.9, 'cách làm việc, cũng được thiết kế lại từng giờ.'],
+  [93.7, 96.8, 'Mấy tháng trước, Anthropic công bố cách dùng Claude'],
+  [96.9, 99.2, 'để hiện đại hoá ứng dụng COBOL.'],
+  [99.7, 103.9, 'Cổ phiếu IBM bốc hơi hơn 10%, chỉ trong một ngày.'],
+  [104.8, 107.7, 'Hôm nay, kỹ năng đó đã được công khai.'],
+  [108.2, 111.95, 'Bất kỳ ai cũng có thể hiện đại hoá một hệ thống 20 năm tuổi…'],
+  [111.95, 113.3, '…chỉ trong vài ngày.'],
+  [116.8, 119.1, 'Vậy thì… chúng ta làm gì đây?'],
+  [121.2, 124.7, 'Làm cho vui… và cống nạp cho các nhà cung cấp LLM?'],
+  [125.2, 128.7, 'Xây hệ thống agentic platform của riêng mình?'],
+  [129.2, 132.4, 'Hay cứ… nằm im, và chờ sung rụng?'],
+];
+const capEl = document.querySelector('#cap span');
+const capBox = document.getElementById('cap');
+let lastCap = null;
+function render(t) {
+  SCENES.forEach(s => { const on = t >= s.a && t < s.b; show(s.g, on); if (on) s.r(t); });
+  let wx = 1920, wc = '#fff';
+  WIPES.forEach(([at, col]) => {
+    if (t >= at - .25 && t < at + .25) {
+      wc = col;
+      wx = t < at ? lerp(1920, 0, easeIn(seg(t, at - .25, at))) : lerp(0, -1920, easeOut(seg(t, at, at + .25)));
+    }
+  });
+  wipe.setAttribute('fill', wc); wipe.setAttribute('x', wx);
+  fade.setAttribute('opacity', seg(t, 141.2, 142));
+  const c = CAPS.find(([a, b]) => t >= a && t < b);
+  const txt = c ? c[2] : null;
+  if (txt !== lastCap) { capEl.textContent = txt || ''; lastCap = txt; }
+  capBox.style.display = txt ? 'block' : 'none';
+}
+window.render = render;
+window.DURATION = 142;
+render(0);
+</script>
+</body>
+</html>

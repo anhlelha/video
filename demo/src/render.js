@@ -5,11 +5,11 @@ const FPS = 30;
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   p.on('pageerror', e => console.log('ERR', e.message));
-  await p.goto('file://' + __dirname + '/scene.html');
+  await p.goto('file://' + __dirname + '/' + (process.env.PAGE || 'scene.html'));
   await p.evaluate(() => document.fonts.ready);
   const dur = await p.evaluate(() => window.DURATION);
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
-    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '18', '-preset', 'medium', 'video_noaudio.mp4'], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '18', '-preset', 'medium', (process.env.VOUT || 'video_noaudio.mp4')], { stdio: ['pipe', 'inherit', 'inherit'] });
   const N = Math.round(dur * FPS);
   for (let f = 0; f < N; f++) {
     await p.evaluate(t => render(t), f / FPS);
