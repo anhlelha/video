@@ -1,5 +1,5 @@
 import numpy as np, wave
-SR = 44100; DUR = 142.0
+SR = 44100; DUR = 144.8
 N = int(SR * DUR)
 out = np.zeros(N)
 rng = np.random.default_rng(7)

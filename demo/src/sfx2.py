@@ -44,7 +44,7 @@ add(ting(1318), 12.0, .15)
 # ---------- Scene 4 (16 – 46.8) ----------
 add(whoosh(.5), 15.75, .35)
 bt = 16.0; step = .5
-while bt < 46.8:
+while bt < 47.0:
     add(kick(), bt, .55); add(hat(), bt + step / 2, .25)
     if bt > 25: add(hat(), bt + step / 4, .15); add(hat(), bt + 3 * step / 4, .15)
     add(note(33 + (5 if int((bt - 16) / 2) % 2 else 0), step * .9, 1, .2), bt, .12)
@@ -56,8 +56,8 @@ for i in range(7): add(thud()[:int(.2 * SR)], 23.6 + i * .06, .18)
 for at, f in zip([25.9, 27.3, 28.7, 30.1, 31.4, 32.9], [1568, 1760, 1976, 2093, 2349, 2637]): add(ting(f), at, .3); add(pop(700), at, .25)
 for at in [34.85, 36.57, 38.4, 40.43]: add(ting(2093), at, .25)
 tk = 41.4; gap = .25
-while tk < 46.8: add(click(), tk, .8); tk += gap; gap = max(.04, gap * .93)
-for at in (44.3, 45.85): add(thud(), at, .9); add(whoosh(.3), at - .25, .3)
+while tk < 47.0: add(click(), tk, .8); tk += gap; gap = max(.04, gap * .93)
+for at in (44.3, 46.3): add(thud(), at, .9); add(whoosh(.3), at - .25, .3)
 # ---------- Scene 5 (47.2 – 74.6) ----------
 proj = np.zeros(int(23.4 * SR))
 for k in range(int(23.4 * 24)): i = int(k / 24 * SR); c = click(); proj[i:i + len(c)] += c[:len(proj) - i] if i < len(proj) else 0
@@ -105,12 +105,15 @@ add(thud(), 101.9, .8)
 add(click(), 106.2, 1.0); add(pop(1200), 106.25, .3)
 for k in range(6): add(whoosh(.6), 108.3 + k * .55, .18)
 add(ting(1568), 112.0, .35); add(ting(2093), 112.08, .2)
-# ---------- Scene 7 (114 – 142) ----------
+# ---------- Scene 7 (114 – 144.8) ----------
 add(band(5.4, .02, .06), 114.0, .12)  # computer fan
-for at, m in [(119.4, 60), (121.1, 64), (125.1, 67), (129.1, 72)]: add(note(m, 3.0, 1, .9), at, .12)
-add(pop(260), 132.2, .7)
-for m in (48, 55, 60, 64): add(note(m, 4.5, 1, 1.6), 134.6, .09)
-add(ting(1046), 138.8, .25); add(ting(1568), 139.2, .2)
+for at, m in [(119.4, 60), (121.1, 64), (125.1, 67), (131.9, 72)]: add(note(m, 3.0, 1, .9), at, .12)
+for i, m in enumerate((72, 76, 79, 84, 88)): add(note(m, 1.2, 1, .5), 127.3 + i * .22, .05)   # galaxy appears
+add(rumble(1.8, 70) * np.linspace(1, 0, int(1.8 * SR)), 129.5, .25); add(whoosh(1.6), 129.6, .5)   # lift-off
+for i, m in enumerate((79, 84, 88, 91)): add(note(m, 1.0, 1, .4), 130.6 + i * .18, .05)
+add(pop(260), 135.0, .7)
+for m in (48, 55, 60, 64): add(note(m, 4.5, 1, 1.6), 137.4, .09)
+add(ting(1046), 141.6, .25); add(ting(1568), 142.0, .2)
 
 out = np.tanh(out * 1.2) * .8
 fade = np.ones(N); fn = int(1.0 * SR); fade[-fn:] = np.linspace(1, 0, fn)

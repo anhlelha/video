@@ -277,7 +277,7 @@
 
 (() => {
   // 7c crossroads (119.4 – 133.4)
-  const S = scene(119.4, 133.4, '#000');
+  const S = scene(119.4, 136.2, '#000');
   const cm = el('g', {}, S.g);
   el('rect', { x: -400, y: -400, width: 2720, height: 1000, fill: 'url(#sky)' }, cm);
   el('circle', { cx: 960, cy: 560, r: 130, fill: '#FFD9A0' }, cm);
@@ -290,10 +290,25 @@
   makeFactory(v1, -110, 0, 220, 180);
   for (let i = 0; i < 5; i++) el('rect', { x: 120 + i * 50, y: -24, width: 30, height: 24, rx: 4, fill: [C.orange, C.gold, '#4A7BD8'][i % 3] }, v1);
   el('rect', { x: 100, y: 0, width: 280, height: 12, fill: '#3A3D45' }, v1);
+  // road 2: the childhood-dream flying car heading for a far galaxy
+  const galaxy = el('g', {}, cm);
+  el('circle', { r: 150, fill: '#E9D8FF', opacity: .18 }, galaxy);
+  el('circle', { r: 70, fill: '#FFF3D6', opacity: .55 }, galaxy);
+  el('circle', { r: 26, fill: '#FFF8E8' }, galaxy);
+  for (let arm = 0; arm < 2; arm++) for (let i = 0; i < 46; i++) {
+    const a = arm * Math.PI + i * .16, rr = 18 + i * 3.4;
+    el('circle', { cx: Math.cos(a) * rr * 1.5, cy: Math.sin(a) * rr * .7, r: 2 + rnd(i + arm * 50) * 3.5, fill: i % 4 ? '#FFFFFF' : '#FFD9A0', opacity: .5 + rnd(i) * .5 }, galaxy);
+  }
+  const skyStars = [];
+  for (let i = 0; i < 40; i++) skyStars.push(el('circle', { cx: 300 + rnd(i + 7) * 1320, cy: -60 + rnd(i + 70) * 420, r: 1.5 + rnd(i + 9) * 2.5, fill: '#fff' }, cm));
   const v2 = el('g', { transform: 'translate(960 560)' }, cm);
-  el('path', { d: 'M-140 0 L-140 -150 L0 -230 L140 -150 L140 0 Z', fill: '#F5F1E8' }, v2);
-  el('rect', { x: -40, y: -90, width: 80, height: 90, fill: C.orange }, v2);
-  makeStar(v2, 0, -160, 34, C.orange);
+  const trail = [];
+  for (let i = 0; i < 26; i++) trail.push(makeStar(v2, 0, 0, 10, i % 2 ? C.gold : '#fff'));
+  const fly = el('g', {}, v2);
+  const flame = el('path', { d: 'M-300 -40 L-420 -20 L-300 0 Z', fill: C.orange }, fly);
+  el('polygon', { points: '-120,-60 40,-60 -60,-170', fill: '#5B4BDB' }, fly);
+  makeCar(fly, '#7FD3FF');
+  el('polygon', { points: '-100,-40 60,-40 -40,60', fill: '#5B4BDB', opacity: .85 }, fly);
   const v3 = el('g', { transform: 'translate(1760 560)' }, cm);
   el('rect', { x: -14, y: -260, width: 28, height: 260, fill: '#5A4130' }, v3);
   el('circle', { cx: 0, cy: -300, r: 120, fill: '#3E7C59' }, v3);
@@ -316,8 +331,8 @@
   el('rect', { x: -12, y: -330, width: 24, height: 330, fill: '#5A4130' }, post);
   const signs = [
     { label: '① Cống nạp', d: 'M-40 -330 L-420 -330 L-460 -290 L-420 -250 L-40 -250 Z', tx: -240, ty: -276, at: 121.1, v: v1, vx: 160 },
-    { label: '② Platform riêng', d: 'M-210 -460 L210 -460 L210 -370 L-210 -370 Z', tx: 0, ty: -400, at: 125.1, v: v2, vx: 960 },
-    { label: '③ Chờ sung rụng', d: 'M40 -330 L420 -330 L460 -290 L420 -250 L40 -250 Z', tx: 240, ty: -276, at: 129.1, v: v3, vx: 1760 },
+    { label: '② Xe bay tới thiên hà', d: 'M-250 -460 L250 -460 L250 -370 L-250 -370 Z', tx: 0, ty: -400, at: 125.1, v: v2, vx: 960 },
+    { label: '③ Chờ sung rụng', d: 'M40 -330 L420 -330 L460 -290 L420 -250 L40 -250 Z', tx: 240, ty: -276, at: 131.9, v: v3, vx: 1760 },
   ].map(s => {
     const gg = el('g', {}, post);
     el('path', { d: s.d, fill: '#F5F1E8', stroke: C.ink, 'stroke-width': 6 }, gg);
@@ -331,9 +346,25 @@
       s.gg.setAttribute('transform', `scale(${t < s.at ? 0 : easeBack(p)})`);
       s.v.setAttribute('opacity', .35 + .65 * (t >= s.at ? 1 : 0));
     });
+    // galaxy appears (the dream), then the flying car lifts off toward it
+    const gp = easeOut(seg(t, 127.2, 128.6));
+    galaxy.setAttribute('transform', `translate(1020 120) rotate(${-12 + t * 4}) scale(${gp})`);
+    galaxy.setAttribute('opacity', gp);
+    skyStars.forEach((st, i) => st.setAttribute('opacity', gp * (.4 + .6 * Math.abs(Math.sin(t * 2 + i)))));
+    const lp = seg(t, 129.6, 131.4);
+    const fx = lerp(230, 120, easeIn(lp)), fy = -easeIn(lp) * 440, fs = lerp(.55, .08, easeIn(lp));
+    fly.setAttribute('transform', `translate(${fx} ${-40 + fy + (t > 128.6 && lp === 0 ? Math.sin(t * 20) * 3 : 0)}) rotate(${-25 * Math.min(1, lp * 4)}) scale(${fs})`);
+    fly.setAttribute('opacity', t < 131.4 ? 1 : 1 - seg(t, 131.4, 131.6));
+    flame.setAttribute('opacity', t > 128.8 ? .7 + .3 * Math.sin(t * 40) : 0);
+    flame.setAttribute('transform', `scale(${1 + .25 * Math.sin(t * 33)} 1)`);
+    trail.forEach((s, i) => {
+      const bt = 129.6 + i * .07, q = seg(bt, 129.6, 131.4);
+      const x = lerp(230, 120, easeIn(q)) - 60, y = -40 - easeIn(q) * 440;
+      s.setAttribute('transform', `translate(${x} ${y}) scale(${t > bt ? 1 - seg(t, bt + .6, bt + 1.6) : 0})`);
+    });
     // fig falls and misses
-    const fp = seg(t, 131.6, 132.2);
-    fig.setAttribute('cx', 60 + fp * 20); fig.setAttribute('cy', -260 + easeIn(fp) * 260 - (t > 132.2 ? Math.max(0, Math.sin(seg(t, 132.2, 132.6) * Math.PI)) * 30 : 0));
+    const fp = seg(t, 134.4, 135.0);
+    fig.setAttribute('cx', 60 + fp * 20); fig.setAttribute('cy', -260 + easeIn(fp) * 260 - (t > 135.0 ? Math.max(0, Math.sin(seg(t, 135.0, 135.4) * Math.PI)) * 30 : 0));
     // camera: crane up, then pan left / centre / right with each sign, then pull back
     let cx = 960, cy = 620, s = 1;
     if (t < 121.0) { const p = easeInOut(seg(t, 119.4, 121.0)); cy = lerp(800, 600, p); s = lerp(1.25, 1, p); }
@@ -342,23 +373,25 @@
       const prev = k > 0 ? signs[k - 1].vx * .55 + 960 * .45 : 960, target = signs[k].vx * .55 + 960 * .45;
       const p = easeInOut(seg(t, signs[k].at - .2, signs[k].at + .6));
       cx = lerp(k === 0 ? 960 : prev, target, p); s = 1.18; cy = 560;
-      if (t > 132.6) { const q = easeInOut(seg(t, 132.6, 133.4)); cx = lerp(cx, 960, q); s = lerp(1.18, 1, q); cy = lerp(560, 620, q); }
+      if (k === 1) { const f = easeInOut(seg(t, 129.3, 130.6)); cy = lerp(560, 330, f); s = lerp(1.18, 1.0, f); }
+      if (k === 2) { cy = lerp(330, 560, p); s = lerp(1.0, 1.18, p); }
+      if (t > 135.4) { const q = easeInOut(seg(t, 135.4, 136.2)); cx = lerp(cx, 960, q); s = lerp(1.18, 1, q); cy = lerp(560, 560, q); }
     }
     cam(cm, cx, cy, s);
   };
 })();
 
 (() => {
-  // 7d the question (133.4 – 138.6) + 7e CTA (138.6 – 142)
-  const Q = scene(133.4, 138.6, '#000');
+  // 7d the question (136.2 – 141.4) + 7e CTA (141.4 – 144.8)
+  const Q = scene(136.2, 141.4, '#000');
   const q = el('text', { x: 960, y: 560, 'text-anchor': 'middle', 'font-size': 96, 'font-weight': 800, fill: '#fff' }, Q.g);
   q.textContent = 'Bạn chọn con đường nào?';
-  Q.r = t => { q.setAttribute('opacity', easeOut(seg(t, 134.6, 136.0))); };
-  const E = scene(138.6, 142.5, C.cream);
+  Q.r = t => { q.setAttribute('opacity', easeOut(seg(t, 137.4, 138.8))); };
+  const E = scene(141.4, 145.3, C.cream);
   const t1 = el('text', { x: 960, y: 470, 'text-anchor': 'middle', 'font-size': 76, 'font-weight': 800, fill: C.ink }, E.g);
   t1.textContent = 'CHIẾC XE LẮP RÁP TRONG MỘT ĐÊM';
   el('rect', { x: 760, y: 512, width: 400, height: 10, rx: 5, fill: C.orange }, E.g);
   const t2 = el('text', { x: 960, y: 620, 'text-anchor': 'middle', 'font-size': 50, 'font-weight': 700, fill: '#6B6455' }, E.g);
   t2.textContent = 'Bình luận lựa chọn của bạn bên dưới 👇';
-  E.r = t => { t1.setAttribute('opacity', easeOut(seg(t, 138.8, 139.4))); t2.setAttribute('opacity', easeOut(seg(t, 139.3, 139.9))); };
+  E.r = t => { t1.setAttribute('opacity', easeOut(seg(t, 141.6, 142.2))); t2.setAttribute('opacity', easeOut(seg(t, 142.1, 142.7))); };
 })();

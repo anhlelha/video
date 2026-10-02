@@ -12,9 +12,12 @@
 
 Toàn bộ thời gian hoạt hình nằm trong hàm `render(t)` của `src/scene.html`.
 
-## Bản đầy đủ: `chiec-xe-lap-rap-full.mp4` (3:18)
+## Bản đầy đủ: `chiec-xe-lap-rap-full.mp4` (khoảng 3:21)
+
+**Dựng lại toàn bộ bằng một lệnh:** `bash src/build.sh <thư_mục_tạm>` (render hình, tạo âm thanh, ghép giọng đọc, nối 2 phần, xuất cả bản nén `-nhe.mp4`).
 
 - Ghép từ Cảnh 1–2 (`scene.html`, cắt ở 56,5 giây, bỏ thẻ kết) và Cảnh 3–7 (`part2.html`, 142 giây).
 - Hình Cảnh 3–7: `PAGE=part2.html VOUT=part2_noaudio.mp4 node src/render.js`
 - Âm thanh Cảnh 3–7: `OUT=sfx2.wav python3 src/sfx2.py`; giọng đọc ở `src/vo2/` (câu thoại trong `src/vo2/lines.txt`).
-- Mốc đặt giọng đọc Cảnh 3–7 (giây, tính từ đầu Cảnh 3): 0.8, 5.6, 10.6, 16.4, 22.0, 25.2, 34.6, 41.6, 48.0, 50.6, 57.8, 64.2, 75.0, 81.6, 86.6, 93.4, 104.6, 116.6, 121.0, 125.0, 129.0, 134.4.
+- Mốc đặt giọng đọc Cảnh 3–7 (giây, tính từ đầu Cảnh 3): 0.8, 5.6, 10.6, 16.4, 22.0, 25.2, 34.6, 41.6, 48.0, 50.6, 57.8, 64.2, 75.0, 81.6, 86.6, 93.4, 104.6, 116.6, 121.0, 125.0, 131.8, 137.2.
+- Các kiểu bánh xe (cổ điển, gai, xích, đôi, lục giác, neon, cánh quạt, ngôi sao, vuông) nằm trong `src/wheels.js`.

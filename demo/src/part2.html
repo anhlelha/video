@@ -41,6 +41,7 @@
 </svg>
 <div id="cap"><span></span></div>
 <script src="common.js"></script>
+<script src="wheels.js"></script>
 <script>
 const SCENES = [];   // {a, b, g, r}
 function scene(a, b, bg) {
@@ -82,7 +83,7 @@ function makeFactory(parent, x, y, w, h) {
 const wipe = el('rect', { x: 1920, y: 0, width: 1920, height: 1080, fill: '#fff' });
 const fade = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#000', opacity: 0 });
 const WIPES = [[16.0, C.cream], [25.0, C.cream], [34.4, C.cream], [74.6, C.cream], [86.4, '#1F4E79'],
-  [93.4, '#E9E2D3'], [104.4, C.cream], [119.4, '#C8607A'], [138.6, C.cream]];
+  [93.4, '#E9E2D3'], [104.4, C.cream], [119.4, '#C8607A'], [141.4, C.cream]];
 const CAPS = [
   [1.0, 5.4, 'Và ở cuối nguồn, các nhà cung cấp LLM… đứng chờ.'],
   [5.8, 9.9, 'Họ lấy ý tưởng bánh xe, lắp vào động cơ của mình…'],
@@ -93,7 +94,7 @@ const CAPS = [
   [25.4, 27.2, 'Rồi đèn pha.'], [27.2, 28.6, 'Rồi đèn pha. Phanh xe.'], [28.6, 30.0, 'Rồi đèn pha. Phanh xe. Đèn hậu.'],
   [30.0, 31.3, 'Rồi đèn pha. Phanh xe. Đèn hậu. Gương.'], [31.3, 32.8, 'Rồi đèn pha. Phanh xe. Đèn hậu. Gương. Bản đồ.'],
   [32.8, 34.3, 'Rồi đèn pha. Phanh xe. Đèn hậu. Gương. Bản đồ. Cốp xe…'],
-  [41.9, 43.3, 'Mỗi vòng lặp như vậy,'], [43.4, 46.6, 'giờ chỉ tính bằng giờ. Bằng ngày.'],
+  [41.9, 43.3, 'Mỗi vòng lặp như vậy,'], [43.4, 46.9, 'giờ chỉ tính bằng ngày. Rồi bằng giờ.'],
   [48.2, 50.3, 'So với ngày xưa… thì sao?'],
   [50.8, 53.2, 'Thời công nghiệp ô tô, phải mất hàng năm,'],
   [53.3, 56.9, 'thậm chí hàng chục năm, mới tiến hoá ra một chức năng.'],
@@ -114,8 +115,9 @@ const CAPS = [
   [111.95, 113.3, '…chỉ trong vài ngày.'],
   [116.8, 119.1, 'Vậy thì… chúng ta làm gì đây?'],
   [121.2, 124.7, 'Làm cho vui… và cống nạp cho các nhà cung cấp LLM?'],
-  [125.2, 128.7, 'Xây hệ thống agentic platform của riêng mình?'],
-  [129.2, 132.4, 'Hay cứ… nằm im, và chờ sung rụng?'],
+  [125.3, 127.05, 'Tự làm một chiếc xe thật đặc biệt:'],
+  [127.1, 131.3, 'chiếc xe bay mơ ước từ thuở ấu thơ, để bay tới thiên hà xa xôi?'],
+  [132.0, 135.2, 'Hay cứ… nằm im, và chờ sung rụng?'],
 ];
 const capEl = document.querySelector('#cap span');
 const capBox = document.getElementById('cap');
@@ -130,14 +132,14 @@ function render(t) {
     }
   });
   wipe.setAttribute('fill', wc); wipe.setAttribute('x', wx);
-  fade.setAttribute('opacity', seg(t, 141.2, 142));
+  fade.setAttribute('opacity', seg(t, 144.0, 144.8));
   const c = CAPS.find(([a, b]) => t >= a && t < b);
   const txt = c ? c[2] : null;
   if (txt !== lastCap) { capEl.textContent = txt || ''; lastCap = txt; }
   capBox.style.display = txt ? 'block' : 'none';
 }
 window.render = render;
-window.DURATION = 142;
+window.DURATION = 144.8;
 render(0);
 </script>
 </body>

@@ -17,6 +17,7 @@
 <body>
 <svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
 <div id="cap"><span></span></div>
+<script src="wheels.js"></script>
 <script>
 const NS = 'http://www.w3.org/2000/svg';
 const svg = document.getElementById('stage');
@@ -435,7 +436,7 @@ const cells = people.map((p, i) => {
   const bub = el('g', {}, inner);
   el('rect', { x: -20, y: -100, width: 260, height: 74, rx: 37, fill: C.ink }, bub);
   el('text', { x: 110, y: -50, 'text-anchor': 'middle', 'font-size': 36, 'font-weight': 800, fill: '#fff' }, bub).textContent = p[1];
-  const w = makeWheel(inner, 48);
+  const w = makeWheelVariant(inner, 44, i);
   return { g, inner, cx, cy, bub, w, person };
 });
 const banner = el('g', { transform: 'translate(960 1000)' }, s2e);

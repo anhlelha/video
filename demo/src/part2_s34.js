@@ -13,7 +13,7 @@
   for (let i = 0; i < 16; i++) {
     const g = el('g', {}, cm);
     el('circle', { r: 46, fill: C.gold, opacity: .35 }, g);
-    const w = makeWheel(g, 28);
+    const w = makeWheelVariant(g, 28, i);
     drift.push({ g, w, off: i / 16 });
   }
   makeFactory(cm, 2420, 960, 300, 300);
@@ -33,7 +33,7 @@
   const clawR = el('path', { d: 'M0 0 L26 30 L14 50', fill: 'none', stroke: '#3A3D45', 'stroke-width': 12, 'stroke-linecap': 'round' }, claw);
   const grabbed = el('g', {}, cm);
   el('circle', { r: 46, fill: C.gold, opacity: .35 }, grabbed);
-  const gw = makeWheel(grabbed, 28);
+  const gw = makeWheelVariant(grabbed, 28, 'spiked');
   const rest = [2520, 520], target = [2260, 880];
   function ik(E) {
     const l = 230, dx = E[0] - base[0], dy = E[1] - base[1];
@@ -306,7 +306,7 @@ const SHELLS = [
   const hh = el('line', { x1: 0, y1: 0, x2: 0, y2: -110, stroke: C.ink, 'stroke-width': 16, 'stroke-linecap': 'round' }, clk);
   const mh = el('line', { x1: 0, y1: 0, x2: 0, y2: -170, stroke: C.orange, 'stroke-width': 10, 'stroke-linecap': 'round' }, clk);
   el('circle', { r: 16, fill: C.ink }, clk);
-  const slam = [['GIỜ.', 44.3, -330], ['NGÀY.', 45.85, 330]].map(([s, at, dx]) => {
+  const slam = [['NGÀY.', 44.3, -330], ['GIỜ.', 46.3, 330]].map(([s, at, dx]) => {
     const tx = el('text', { x: 0, y: 0, 'text-anchor': 'middle', 'font-size': 150, 'font-weight': 800, fill: C.orange }, g);
     tx.textContent = s; return { tx, at, dx };
   });
@@ -335,6 +335,6 @@ const SHELLS = [
       s.tx.setAttribute('transform', `translate(${CX + s.dx} ${CY + 330}) scale(${lerp(2.2, 1, easeOut(p))})`);
     });
     // hard cut to black after the peak
-    blackout.setAttribute('opacity', t > 46.8 ? 1 : 0);
+    blackout.setAttribute('opacity', t > 47.0 ? 1 : 0);
   };
 })();
