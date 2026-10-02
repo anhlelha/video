@@ -75,12 +75,10 @@
 | Bật lại màu, nhịp nhanh. Một startup "AI Slide" lung linh với banner "Series A 🎉". | "Bây giờ thì sao? Mới năm trước, còn cả những công ty chuyên làm slide bằng AI." | Electronic trở lại. |
 | Một chiếc xe chính hãng chạy ngang qua, tính năng "Tạo slide" đã gắn sẵn như một nút bấm mặc định. Banner startup bay mất như tờ giấy trong gió. | "Năm nay, nó là tính năng mặc định của Claude, của ChatGPT." | Tiếng "vút" của xe. |
 | Chuyển cảnh: một cỗ máy cổ đại khổng lồ, đầy bụi, nhãn **COBOL — 1985**. Những sợi dây chằng chịt. | "Thậm chí không chỉ là sản phẩm, mà cả **phương pháp luận**, cách làm việc, cũng được thiết kế lại từng giờ." | |
-| Một nhân viên Anthropic + Claude tháo rời cỗ máy COBOL, lắp lại thành một hệ thống hiện đại. Màn hình chứng khoán: mã **IBM** biến động mạnh, mũi tên **hơn 10%** trong một ngày. | "Mấy tháng trước, Anthropic công bố cách dùng Claude để hiện đại hoá ứng dụng COBOL. Cổ phiếu IBM biến động hơn 10% chỉ trong một ngày." | Tiếng chuông sàn chứng khoán. |
+| Một nhân viên Anthropic + Claude tháo rời cỗ máy COBOL, lắp lại thành một hệ thống hiện đại. Màn hình chứng khoán: mã **IBM** lao dốc, mũi tên đỏ **−10%+** trong một ngày. | "Mấy tháng trước, Anthropic công bố cách dùng Claude để hiện đại hoá ứng dụng COBOL. Cổ phiếu IBM bốc hơi hơn 10% chỉ trong một ngày." | Tiếng chuông sàn chứng khoán. |
 | Bản thiết kế đó được "mở khoá" 🔓, nhân bản ra hàng nghìn bản bay đi khắp thế giới. Chữ: **"Vài ngày."** | "Hôm nay, kỹ năng đó đã được công khai. Bất kỳ ai cũng có thể hiện đại hoá một hệ thống 20 năm tuổi… chỉ trong vài ngày." | |
 
-> 📌 **Ghi chú fact-check (quan trọng):** [Unverified] Theo em nhớ, khoảng **tháng 2/2026**, cổ phiếu IBM **giảm** (không phải tăng) khoảng 13% trong một ngày sau khi Anthropic công bố nội dung về Claude Code và hiện đại hoá COBOL. Câu gốc của anh/chị viết "bay hơn 10%". Nếu ý là "bốc hơi" thì khớp, nhưng nếu ý là "tăng" thì có thể sai. Lời thoại ở trên tạm dùng chữ trung tính **"biến động"**; cần kiểm tra chiều tăng/giảm, ngày và tên chính xác của "kỹ năng" đã public trước khi chốt.
->
-> **Gợi ý nếu xác nhận là giảm:** "…và cổ phiếu IBM bốc hơi hơn 10% chỉ trong một ngày." Chi tiết này còn mạnh hơn cho thông điệp: một bài đăng blog đủ làm lung lay một gã khổng lồ.
+> 📌 **Ghi chú fact-check:** [Unverified] Khoảng tháng 2/2026, cổ phiếu IBM giảm khoảng 13% trong một ngày sau khi Anthropic công bố nội dung về Claude Code và hiện đại hoá COBOL. Cần xác minh ngày, tỷ lệ % và tên chính xác của kỹ năng đã public trước khi xuất bản.
 
 ---
 
@@ -113,17 +111,13 @@
 
 > [Inference] Cách gán bộ phận ↔ khái niệm là đề xuất của em để hình ảnh dễ hiểu, không phải dòng thời gian lịch sử chính xác.
 
-## PHỤ LỤC B — 3 PHƯƠNG ÁN KẾT (chọn 1)
+## PHỤ LỤC B — PHƯƠNG ÁN KẾT
 
-| Phương án | Mô tả | Ưu | Nhược |
-|---|---|---|---|
-| **1. Ngã ba đường (đã viết, khuyến nghị)** | 3 biển chỉ dẫn, câu hỏi mở | Kích thích bình luận, trung lập | Không đưa quan điểm |
-| 2. Gợi ý nghiêng về "platform riêng" | Biển 2 sáng lên nhẹ ở cuối | Có thông điệp rõ, hợp nếu kênh làm về giải pháp doanh nghiệp | Dễ bị xem là quảng cáo |
-| 3. Twist hài | Quả sung rụng trúng đầu người nằm chờ → "Sung rụng… nhưng là của người khác" | Dễ viral, đáng nhớ | Làm giảm sức nặng của câu hỏi |
+**Đã chốt: Phương án 1, Ngã ba đường.** Kết trung lập bằng 3 biển chỉ dẫn và câu hỏi mở (xem Cảnh 7).
 
 ## PHỤ LỤC C — CHECKLIST TRƯỚC KHI SẢN XUẤT
 
-1. Xác minh chi tiết IBM (tăng hay giảm, ngày, tỷ lệ %, tên bài công bố).
+1. Xác minh chi tiết IBM (ngày, tỷ lệ %, tên bài công bố).
 2. Xác minh tên "kỹ năng" modernize COBOL đã public (tên chính xác, nơi công bố).
 3. Xác minh mốc thời gian vụ kiện Kearns và Ford.
 4. Kiểm tra quyền dùng logo Claude/Gemini/GPT/IBM/Ford: an toàn nhất là dùng chữ hoặc hình cách điệu thay cho logo thật.
