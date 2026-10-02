@@ -3,7 +3,7 @@
 *Một suy ngẫm cho cha mẹ về việc học của con trong thời AI*
 
 - **Khán giả:** Phụ huynh 30–50 tuổi
-- **Thời lượng:** ~3:00 phút (lời thoại ~450 từ, đọc chậm, có khoảng lặng)
+- **Thời lượng:** 3:05 (lời thoại khoảng 400 từ, đọc chậm, có khoảng lặng)
 - **Phong cách:** Hoạt hình 2D minh hoạ, nét vẽ tay ấm, tông giấy cũ; mỗi thời đại một bảng màu riêng
 - **Giọng đọc:** Trầm, chậm, như đang tâm sự, không giảng giải
 - **Nhạc nền:** Piano/guitar mộc, nhẹ; chỉ thêm nhạc cụ dân gian ở cảnh nông nghiệp; **im lặng hoàn toàn** ở câu hỏi cuối
@@ -13,7 +13,7 @@
 
 ---
 
-## CẢNH 1 — BUỔI TỐI QUEN THUỘC (0:00 – 0:20)
+## CẢNH 1 — BUỔI TỐI QUEN THUỘC (0:00 – 0:21)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -24,7 +24,7 @@
 
 ---
 
-## CẢNH 2 — THỜI SĂN BẮT, HÁI LƯỢM (0:20 – 0:42)
+## CẢNH 2 — THỜI SĂN BẮT, HÁI LƯỢM (0:21 – 0:42)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -34,7 +34,7 @@
 
 ---
 
-## CẢNH 3 — THỜI NGỰA VÀ GIÁO MÁC (0:42 – 1:02)
+## CẢNH 3 — THỜI NGỰA VÀ GIÁO MÁC (0:42 – 0:59)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -43,7 +43,7 @@
 
 ---
 
-## CẢNH 4 — THỜI LÚA NƯỚC (1:02 – 1:30)
+## CẢNH 4 — THỜI LÚA NƯỚC (0:59 – 1:25)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -53,7 +53,7 @@
 
 ---
 
-## CẢNH 5 — LỜI THAN NGHÌN NĂM (1:30 – 1:48)
+## CẢNH 5 — LỜI THAN NGHÌN NĂM (1:25 – 1:41)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -62,7 +62,7 @@
 
 ---
 
-## CẢNH 6 — CON NGỰA TIẾP THEO? (1:48 – 2:25)
+## CẢNH 6 — CON NGỰA TIẾP THEO? (1:41 – 2:16)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -73,7 +73,7 @@
 
 ---
 
-## CẢNH 7 — NHỮNG CÂU HỎI (2:25 – 2:48)
+## CẢNH 7 — NHỮNG CÂU HỎI (2:16 – 2:41)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|
@@ -82,7 +82,7 @@
 
 ---
 
-## CẢNH 8 — TRỞ LẠI PHÒNG KHÁCH (2:48 – 3:00)
+## CẢNH 8 — TRỞ LẠI PHÒNG KHÁCH (2:41 – 3:05)
 
 | Hình ảnh | Lời thoại (VO) | Âm thanh |
 |---|---|---|

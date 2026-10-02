@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Kỹ năng nào rồi cũng ra đi</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #F7EBD3; }
+  body, svg text { font-family: 'Be Vietnam Pro', sans-serif; }
+  svg { position: absolute; inset: 0; }
+  #cap { position: absolute; left: 0; right: 0; bottom: 50px; text-align: center; pointer-events: none; }
+  #cap span { display: inline-block; max-width: 1560px; padding: 12px 32px; border-radius: 14px;
+    background: rgba(30, 24, 18, .70); color: #FFF8E8; font-size: 42px; font-weight: 700; line-height: 1.35; }
+</style>
+</head>
+<body>
+<svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080"><defs id="defs"></defs></svg>
+<div id="cap"><span></span></div>
+<script src="timeline.js"></script>
+<script src="lib.js"></script>
+<script>const SC = {};</script>
+<script src="s18.js"></script>
+<script src="s2.js"></script>
+<script src="s3.js"></script>
+<script src="s4.js"></script>
+<script src="s5.js"></script>
+<script src="s6.js"></script>
+<script src="s7.js"></script>
+<script>
+const grain = paperTexture(svg);
+const dip = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#F7EBD3', opacity: 0 });
+const capEl = document.querySelector('#cap span');
+function render(t) {
+  let k = SCENES.findIndex(s => t >= s.s && t < s.e) + 1;
+  if (k === 0) k = SCENES.length;
+  for (const i in SC) {
+    const on = +i === k;
+    show(SC[i].g, on);
+    if (on) SC[i].render(t, t - SCENES[i - 1].s);
+  }
+  // soft dip between scenes (scene 1->2 has its own flash)
+  let d = 0;
+  SCENES.forEach((s, i) => { if (i > 1) d = Math.max(d, 1 - Math.abs(t - s.s) / .35); });
+  op(dip, d);
+  const ln = LINES.find((l, i) => t >= l.s - .05 && t <= l.e + .25 && ![21, 22, 23].includes(i));
+  capEl.textContent = ln ? ln.text : '';
+  capEl.style.display = ln ? 'inline-block' : 'none';
+}
+render(0);
+</script>
+</body>
+</html>

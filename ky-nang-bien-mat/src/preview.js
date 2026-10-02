@@ -1,0 +1,11 @@
+const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+(async () => {
+  const b = await chromium.launch();
+  const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+  p.on('pageerror', e => console.log('ERR', e.message));
+  await p.goto('file://' + __dirname + '/' + (process.env.PAGE || 'main.html'));
+  await p.evaluate(() => document.fonts.ready);
+  const ts = process.argv.slice(2).map(Number);
+  for (const t of ts) { await p.evaluate(t => render(t), t); await p.screenshot({ path: `${process.env.OUT || 'prev'}/f_${t}.png` }); }
+  await b.close();
+})();
