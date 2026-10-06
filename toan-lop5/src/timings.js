@@ -1,0 +1,4 @@
+const LS=[1.0, 7.72, 13.25, 20.21, 27.08, 32.76, 42.96, 53.24, 61.47, 69.81, 80.09, 86.69, 98.58, 107.66];
+const LD=[6.024, 4.824, 6.264, 6.168, 4.176, 9.504, 9.576, 7.536, 6.84, 9.576, 5.904, 11.184, 7.584, 9.816];
+const SUBS=["Chào các em! Cùng giải bài toán diện tích tam giác nhé.", "Tam giác ABC có diện tích 210 cm².", "Điểm D trên BC: BD : DC = 2 : 5", "Điểm E trên AD: AE : ED = 3 : 2", "Tính diện tích tam giác CDE?", "Bước 1: Tam giác ABD và ADC có chung chiều cao hạ từ A.", "Chung chiều cao → diện tích tỉ lệ với đáy: 2 phần và 5 phần.", "Tổng 7 phần. Mỗi phần: 210 : 7 = 30 cm²", "S(ADC) = 5 × 30 = 150 cm²", "Bước 2: CE chia tam giác ADC thành AEC và EDC.", "Hai tam giác này có chung chiều cao hạ từ C.", "Tổng 5 phần. Mỗi phần: 150 : 5 = 30 cm²", "S(CDE) = 2 × 30 = 60 cm²", "Đáp số: 60 cm². Mẹo: chung chiều cao → so sánh đáy!"];
+window.DURATION=121.68;

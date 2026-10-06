@@ -1,0 +1,14 @@
+Chào các em! Hôm nay mình cùng giải một bài toán về diện tích tam giác nhé.|Chào các em! Cùng giải bài toán diện tích tam giác nhé.
+Cho tam giác A B C có diện tích là 210 xăng-ti-mét vuông.|Tam giác ABC có diện tích 210 cm².
+Điểm D nằm trên cạnh B C, sao cho B D là 2 phần, D C là 5 phần.|Điểm D trên BC: BD : DC = 2 : 5
+Điểm E nằm trên đoạn A D, sao cho A E là 3 phần, E D là 2 phần.|Điểm E trên AD: AE : ED = 3 : 2
+Hỏi: diện tích tam giác C D E là bao nhiêu?|Tính diện tích tam giác CDE?
+Bước một. Nhìn hai tam giác A B D và A D C. Chúng có chung đỉnh A, nên có chung chiều cao hạ từ A xuống B C.|Bước 1: Tam giác ABD và ADC có chung chiều cao hạ từ A.
+Hai tam giác có chung chiều cao, thì diện tích tỉ lệ với độ dài đáy. Đáy B D là 2 phần, đáy D C là 5 phần.|Chung chiều cao → diện tích tỉ lệ với đáy: 2 phần và 5 phần.
+Tổng cộng là 7 phần. Mỗi phần là: 210 chia 7, bằng 30 xăng-ti-mét vuông.|Tổng 7 phần. Mỗi phần: 210 : 7 = 30 cm²
+Vậy tam giác A D C có diện tích là: 5 nhân 30, bằng 150 xăng-ti-mét vuông.|S(ADC) = 5 × 30 = 150 cm²
+Bước hai. Bây giờ, ta chỉ nhìn vào tam giác A D C. Đoạn C E chia nó thành hai tam giác: A E C và E D C.|Bước 2: CE chia tam giác ADC thành AEC và EDC.
+Hai tam giác này có chung đỉnh C, nên có chung chiều cao hạ từ C xuống A D.|Hai tam giác này có chung chiều cao hạ từ C.
+Đáy A E là 3 phần, đáy E D là 2 phần. Tổng là 5 phần. Mỗi phần là: 150 chia 5, bằng 30.|Tổng 5 phần. Mỗi phần: 150 : 5 = 30 cm²
+Tam giác C D E ứng với 2 phần, nên diện tích là: 2 nhân 30, bằng 60 xăng-ti-mét vuông.|S(CDE) = 2 × 30 = 60 cm²
+Đáp số: 60 xăng-ti-mét vuông. Mẹo nhớ nè: chung chiều cao, thì so sánh đáy! Chúc các em học tốt!|Đáp số: 60 cm². Mẹo: chung chiều cao → so sánh đáy!
