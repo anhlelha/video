@@ -14,7 +14,7 @@ svg{display:block;font-family:BVP,sans-serif}
 .pt{font-family:"DejaVu Serif",serif;font-style:italic;font-weight:700}
 </style></head>
 <body>
-<svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<svg id="stage"></svg>
 <script src="timings.js"></script>
 <script>
 const NS='http://www.w3.org/2000/svg', svg=document.getElementById('stage');
@@ -25,6 +25,16 @@ const easeOut=p=>1-Math.pow(1-p,3), easeBack=p=>{const c=1.9;return 1+(c+1)*Math
 const L=i=>LS[i-1], E=i=>LS[i-1]+LD[i-1];
 const C={bg:'#FBF8F1',ink:'#22252B',muted:'#6B6F78',blue:'#3B7DD8',blueF:'#CFE0F7',orange:'#E8843B',orangeF:'#FBDDC4',
   green:'#2E9E5B',greenF:'#C9EBD6',grey:'#E4E2DC',gold:'#F2B33D',red:'#D9473B',panel:'#FFFFFF'};
+// layout: ?v → vertical 1080x1920 (TikTok, content kept inside UI safe zone), else 1920x1080
+const V=location.search.includes('v');
+const LY=V?{W:1080,H:1920,GS:.82,GX:-38,GY:20,PX:40,PY:805,PW:920,PH:570,
+  YG:[875,960,1040,1120,1200],Y1:[875,945,1003,1061,1145,1220,1280,1340],Y2:[875,950,1010,1070,1160,1240,1325],
+  subY:1385,subH:115,subF:36,cx:500}
+ :{W:1920,H:1080,GS:1,GX:0,GY:0,PX:1170,PY:120,PW:690,PH:790,
+  YG:[205,300,380,460,540],Y1:[205,290,350,420,520,620,700,780],Y2:[205,290,360,430,530,630,740],
+  subY:968,subH:112,subF:40,cx:960};
+for(const [k,v] of [['width',LY.W],['height',LY.H],['viewBox',`0 0 ${LY.W} ${LY.H}`]])svg.setAttribute(k,v);
+const lerp=(a,b,p)=>a+(b-a)*p, easeIO=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
 
 // geometry
 const A={x:560,y:150},B={x:170,y:860},Cc={x:1070,y:860};
@@ -35,7 +45,8 @@ const K={x:A.x+tt*dx,y:A.y+tt*dy};
 const P=(...ps)=>ps.map(p=>p.x+','+p.y).join(' ');
 
 // ---------- layers ----------
-const geo=el('g',{});
+const geo=el('g',{transform:`translate(${LY.GX} ${LY.GY}) scale(${LY.GS})`});
+const toScr=p=>[p.x*LY.GS+LY.GX,p.y*LY.GS+LY.GY];
 const fABC=el('polygon',{points:P(A,B,Cc),fill:'#FFF3D6',opacity:0},geo);
 const fABD=el('polygon',{points:P(A,B,D),fill:C.blueF,opacity:0},geo);
 const fADC=el('polygon',{points:P(A,D,Cc),fill:C.orangeF,opacity:0},geo);
@@ -86,9 +97,9 @@ const a150=areaLab('150',800,700,C.orange,56);
 const a60=areaLab('60 cm²',640,845,C.green,46);
 
 // ---------- right panel ----------
-const PX=1170,PW=690;
+const PX=LY.PX,PW=LY.PW;
 const panel=el('g',{opacity:0});
-el('rect',{x:PX,y:120,width:PW,height:790,rx:28,fill:C.panel,stroke:'#E8E3D8','stroke-width':3},panel);
+el('rect',{x:PX,y:LY.PY,width:PW,height:LY.PH,rx:28,fill:C.panel,stroke:'#E8E3D8','stroke-width':3},panel);
 const items=[];
 function item(g,t0,t1){items.push({g,t0,t1});g.setAttribute('opacity',0);return g;}
 function ptext(s,y,t0,t1,o={}){const g=el('g',{},panel);
@@ -103,52 +114,176 @@ function boxes(n,k,y,t0,t1,c1,c2,label){const g=el('g',{},panel);const w=Math.mi
   const it=item(g,t0,t1);it._bs=bs;it._t0=t0;return it;}
 // phase 0: given
 const g1=L(2),g2=L(6)-.3;
-header('Đề bài',205,L(2),g2,C.ink);
-ptext('S(ABC) = 210 cm²',300,L(2)+1.2,g2,{w:700});
-ptext('BD : DC = 2 : 5',380,L(3)+.5,g2,{w:700});
-ptext('AE : ED = 3 : 2',460,L(4)+.5,g2,{w:700});
-ptext('S(CDE) = ?',540,L(5)+.3,g2,{w:800,color:C.green});
+header('Đề bài',LY.YG[0],L(2),g2,C.ink);
+ptext('S(ABC) = 210 cm²',LY.YG[1],L(2)+1.2,g2,{w:700});
+ptext('BD : DC = 2 : 5',LY.YG[2],L(3)+.5,g2,{w:700});
+ptext('AE : ED = 3 : 2',LY.YG[3],L(4)+.5,g2,{w:700});
+ptext('S(CDE) = ?',LY.YG[4],L(5)+.3,g2,{w:800,color:C.green});
 // phase 1
 const s1=L(6),s1e=L(10)-.3;
-header('Bước 1',205,s1,s1e,C.blue);
-ptext('ABD và ADC chung chiều cao h',290,s1+1,s1e,{size:33});
-ptext('→ Diện tích tỉ lệ với đáy',350,L(7)+.3,s1e,{size:33});
-ptext('S(ABD) : S(ADC) = 2 : 5',420,L(7)+3.5,s1e,{w:700,size:34});
-const bx1=boxes(7,2,520,L(8)+.2,s1e,C.blue,C.orange,'30');
-ptext('Mỗi phần: 210 : 7 = 30 cm²',620,L(8)+3,s1e,{w:700,size:34});
-ptext('S(ABD) = 2 × 30 = 60 cm²',700,L(9)-.2,s1e,{size:33,color:C.blue,w:700});
-ptext('S(ADC) = 5 × 30 = 150 cm²',780,L(9)+1.2,s1e,{size:33,color:C.orange,w:800,box:'#FFF1E5'});
+header('Bước 1',LY.Y1[0],s1,s1e,C.blue);
+ptext('ABD và ADC chung chiều cao h',LY.Y1[1],s1+1,s1e,{size:33});
+ptext('→ Diện tích tỉ lệ với đáy',LY.Y1[2],L(7)+.3,s1e,{size:33});
+ptext('S(ABD) : S(ADC) = 2 : 5',LY.Y1[3],L(7)+3.5,s1e,{w:700,size:34});
+const bx1=boxes(7,2,LY.Y1[4],L(8)+.2,s1e,C.blue,C.orange,'30');
+ptext('Mỗi phần: 210 : 7 = 30 cm²',LY.Y1[5],L(8)+3,s1e,{w:700,size:34});
+ptext('S(ABD) = 2 × 30 = 60 cm²',LY.Y1[6],L(9)-.2,s1e,{size:33,color:C.blue,w:700});
+ptext('S(ADC) = 5 × 30 = 150 cm²',LY.Y1[7],L(9)+1.2,s1e,{size:33,color:C.orange,w:800,box:'#FFF1E5'});
 // phase 2
 const s2=L(10),s2e=L(14)-.3;
-header('Bước 2',205,s2,s2e,C.green);
-ptext('S(ADC) = 150 cm²',290,s2+.6,s2e,{w:700,color:C.orange,size:34});
-ptext('AEC và EDC chung chiều cao h',360,L(11)+.3,s2e,{size:33});
-ptext('Đáy: AE : ED = 3 : 2',430,L(12)+.3,s2e,{w:700,size:34});
-const bx2=boxes(5,3,530,L(12)+3.6,s2e,C.orange,C.green,'30');
-ptext('Mỗi phần: 150 : 5 = 30 cm²',630,L(12)+6.5,s2e,{w:700,size:34});
-ptext('S(CDE) = 2 × 30 = 60 cm²',740,L(13)+2.5,s2e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
+header('Bước 2',LY.Y2[0],s2,s2e,C.green);
+ptext('S(ADC) = 150 cm²',LY.Y2[1],s2+.6,s2e,{w:700,color:C.orange,size:34});
+ptext('AEC và EDC chung chiều cao h',LY.Y2[2],L(11)+.3,s2e,{size:33});
+ptext('Đáy: AE : ED = 3 : 2',LY.Y2[3],L(12)+.3,s2e,{w:700,size:34});
+const bx2=boxes(5,3,LY.Y2[4],L(12)+3.6,s2e,C.orange,C.green,'30');
+ptext('Mỗi phần: 150 : 5 = 30 cm²',LY.Y2[5],L(12)+6.5,s2e,{w:700,size:34});
+ptext('S(CDE) = 2 × 30 = 60 cm²',LY.Y2[6],L(13)+2.5,s2e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
 
 // ---------- title & answer cards ----------
-const title=el('g',{});
-el('rect',{x:0,y:0,width:1920,height:1080,fill:C.bg},title);
-txt('TOÁN LỚP 5',{x:960,y:380,'font-size':44,'font-weight':700,fill:C.orange,'text-anchor':'middle','letter-spacing':8},title);
-txt('Diện tích tam giác',{x:960,y:500,'font-size':110,'font-weight':800,fill:C.ink,'text-anchor':'middle'},title);
-txt('Bí kíp: chung chiều cao → so sánh đáy',{x:960,y:600,'font-size':46,fill:C.muted,'text-anchor':'middle'},title);
-const tTri=el('polygon',{points:'960,660 860,800 1060,800',fill:C.greenF,stroke:C.ink,'stroke-width':5},title);
+const title=el('g',{}), CX=LY.cx;
+el('rect',{x:0,y:0,width:LY.W,height:LY.H,fill:C.bg},title);
+if(V){ // TikTok cover: question + the given figure + monkey (drawn later)
+  txt('TOÁN LỚP 5 · DIỆN TÍCH TAM GIÁC',{x:CX,y:250,'font-size':38,'font-weight':700,fill:C.orange,'text-anchor':'middle','letter-spacing':4},title);
+  const q1=txt('',{x:CX,y:370,'font-size':72,'font-weight':800,fill:C.ink,'text-anchor':'middle'},title);
+  [['Tam giác ',C.ink],['CDE',C.green],[' có diện tích',C.ink]].forEach(([w,f])=>{const ts=el('tspan',{fill:f},q1);ts.textContent=w;});
+  txt('bao nhiêu cm²?',{x:CX,y:462,'font-size':72,'font-weight':800,fill:C.ink,'text-anchor':'middle'},title);
+  const m=el('g',{transform:'translate(160 455) scale(.58)'},title);
+  el('polygon',{points:P(A,B,Cc),fill:'#FFF3D6'},m);el('polygon',{points:P(Ept,D,Cc),fill:C.greenF},m);
+  for(const [p,q] of [[A,D],[Cc,Ept]])el('line',{x1:p.x,y1:p.y,x2:q.x,y2:q.y,stroke:C.ink,'stroke-width':7},m);
+  el('polygon',{points:P(A,B,Cc),fill:'none',stroke:C.ink,'stroke-width':9,'stroke-linejoin':'round'},m);
+  for(const [p,n,lx,ly] of [[A,'A',0,-30],[B,'B',-46,48],[Cc,'C',48,48],[D,'D',0,80],[Ept,'E',-56,8]]){
+    el('circle',{cx:p.x,cy:p.y,r:15,fill:C.gold,stroke:'#fff','stroke-width':4},m);txt(n,{x:p.x+lx,y:p.y+ly,'font-size':70,fill:C.ink,'text-anchor':'middle',class:'pt'},m);}
+  for(const [w,x,y,f] of [['2 phần',(B.x+D.x)/2,940,C.blue],['5 phần',(D.x+Cc.x)/2,940,C.orange],['3 phần',(A.x+Ept.x)/2+68,(A.y+Ept.y)/2-10,C.orange],['2 phần',(Ept.x+D.x)/2+105,(Ept.y+D.y)/2-5,C.green]])
+    txt(w,{x,y,'font-size':42,'font-weight':800,fill:f,'text-anchor':'middle'},m);
+  txt('210 cm²',{x:628,y:500,'font-size':52,'font-weight':800,fill:C.ink,'text-anchor':'middle'},m);
+  txt('?',{x:770,y:830,'font-size':110,'font-weight':800,fill:C.green,'text-anchor':'middle'},m);}
+else{txt('TOÁN LỚP 5',{x:960,y:380,'font-size':44,'font-weight':700,fill:C.orange,'text-anchor':'middle','letter-spacing':8},title);
+  txt('Diện tích tam giác',{x:960,y:500,'font-size':110,'font-weight':800,fill:C.ink,'text-anchor':'middle'},title);
+  txt('Bí kíp: chung chiều cao → so sánh đáy',{x:960,y:600,'font-size':46,fill:C.muted,'text-anchor':'middle'},title);}
+const tTri=el('polygon',{points:'960,660 860,800 1060,800',fill:C.greenF,stroke:C.ink,'stroke-width':5,display:V?'none':'inline'},title);
 const ans=el('g',{opacity:0});
-el('rect',{x:0,y:0,width:1920,height:1080,fill:C.bg,opacity:.94},ans);
-const ansCard=el('g',{},ans);
-el('rect',{x:460,y:250,width:1000,height:420,rx:40,fill:'#fff',stroke:C.green,'stroke-width':8},ansCard);
-txt('Đáp số',{x:960,y:370,'font-size':56,'font-weight':700,fill:C.muted,'text-anchor':'middle'},ansCard);
-txt('S(CDE) = 60 cm²',{x:960,y:520,'font-size':110,'font-weight':800,fill:C.green,'text-anchor':'middle'},ansCard);
-const tip=el('g',{opacity:0},ans);
-el('rect',{x:430,y:720,width:1060,height:110,rx:55,fill:C.gold},tip);
-txt('💡 Chung chiều cao → so sánh đáy!',{x:960,y:793,'font-size':50,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);
+el('rect',{x:0,y:0,width:LY.W,height:LY.H,fill:C.bg,opacity:.94},ans);
+const ansCard=el('g',{},ans), ACY=V?700:460, AW=V?820:1000;
+el('rect',{x:CX-AW/2,y:ACY-210,width:AW,height:420,rx:40,fill:'#fff',stroke:C.green,'stroke-width':8},ansCard);
+txt('Đáp số',{x:CX,y:ACY-90,'font-size':56,'font-weight':700,fill:C.muted,'text-anchor':'middle'},ansCard);
+if(V){txt('60 cm²',{x:CX,y:ACY+70,'font-size':150,'font-weight':800,fill:C.green,'text-anchor':'middle'},ansCard);
+  txt('diện tích tam giác CDE',{x:CX,y:ACY+150,'font-size':48,'font-weight':700,fill:C.ink,'text-anchor':'middle'},ansCard);}
+else txt('S(CDE) = 60 cm²',{x:960,y:520,'font-size':110,'font-weight':800,fill:C.green,'text-anchor':'middle'},ansCard);
+const tip=el('g',{opacity:0},ans), TY=V?1010:775;
+if(V){el('rect',{x:CX-430,y:TY-75,width:860,height:170,rx:50,fill:C.gold},tip);
+  txt('💡 Chung chiều cao',{x:CX,y:TY-5,'font-size':50,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);
+  txt('→ so sánh đáy!',{x:CX,y:TY+60,'font-size':50,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);}
+else{el('rect',{x:430,y:720,width:1060,height:110,rx:55,fill:C.gold},tip);
+  txt('💡 Chung chiều cao → so sánh đáy!',{x:960,y:793,'font-size':50,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);}
+
+// ---------- monkey teaching assistant (TikTok version only) ----------
+const MK={brown:'#8A5A33',dark:'#5E3B1F',tan:'#F1CFA4',pink:'#F29C9C'};
+const mon=el('g',{display:V?'inline':'none'});
+const monJ=el('g',{},mon);              // jump / bounce
+const tailG=el('g',{},monJ);
+el('path',{d:'M22,-30 C95,-25 105,-115 62,-122 C34,-126 32,-94 56,-96',fill:'none',stroke:MK.brown,'stroke-width':12,'stroke-linecap':'round'},tailG);
+const legs=[-24,24].map(x=>{const g=el('g',{},monJ);el('rect',{x:-11,y:-12,width:22,height:52,rx:11,fill:MK.brown},g);
+  el('ellipse',{cx:0,cy:40,rx:15,ry:10,fill:MK.tan},g);return {g,x};});
+el('ellipse',{cx:0,cy:-55,rx:48,ry:60,fill:MK.brown},monJ);
+el('ellipse',{cx:0,cy:-45,rx:31,ry:41,fill:MK.tan},monJ);
+// props (drawn in hand space; hand at origin, arm points along +y)
+function prop(kind,p){const g=el('g',{display:'none'},p);
+  if(kind==='pointer'){el('line',{x1:0,y1:0,x2:0,y2:150,stroke:'#9C6B3E','stroke-width':7,'stroke-linecap':'round'},g);el('circle',{cx:0,cy:152,r:8,fill:C.red},g);}
+  if(kind==='glass'){el('line',{x1:0,y1:0,x2:0,y2:34,stroke:'#3A3A3A','stroke-width':10,'stroke-linecap':'round'},g);
+    el('circle',{cx:0,cy:66,r:31,fill:'rgba(190,225,255,.55)',stroke:'#3A3A3A','stroke-width':8},g);el('path',{d:'M-14,52 Q-6,44 4,46',fill:'none',stroke:'#fff','stroke-width':5,'stroke-linecap':'round'},g);}
+  if(kind==='pencil'){el('rect',{x:-7,y:-10,width:14,height:62,fill:C.gold,stroke:MK.dark,'stroke-width':2},g);el('polygon',{points:'-7,52 7,52 0,72',fill:MK.tan,stroke:MK.dark,'stroke-width':2},g);
+    el('rect',{x:-7,y:-20,width:14,height:11,fill:C.red},g);}
+  // upright props: counter-rotated each frame
+  if(kind==='sign'){const u=el('g',{class:'up'},g);el('line',{x1:0,y1:0,x2:0,y2:-30,stroke:'#9C6B3E','stroke-width':8},u);
+    el('rect',{x:-55,y:-140,width:110,height:110,rx:18,fill:'#fff',stroke:C.orange,'stroke-width':7},u);txt('?',{x:0,y:-55,'font-size':88,'font-weight':800,fill:C.orange,'text-anchor':'middle'},u);}
+  if(kind==='banana'){const u=el('g',{class:'up'},g);el('path',{d:'M-30,-40 Q-38,10 10,22 Q40,26 46,8 Q8,10 -6,-28 Z',fill:'#FFD84A',stroke:'#C99A12','stroke-width':4,'stroke-linejoin':'round'},u);
+    el('rect',{x:-36,y:-50,width:10,height:14,rx:3,fill:'#7A5A1A'},u);}
+  if(kind==='check'){const u=el('g',{class:'up'},g);el('circle',{cx:0,cy:-30,r:30,fill:C.green},u);el('path',{d:'M-14,-30 l9,10 l18,-20',fill:'none',stroke:'#fff','stroke-width':7,'stroke-linecap':'round','stroke-linejoin':'round'},u);}
+  return g;}
+function arm(sx){const g=el('g',{},monJ);el('line',{x1:0,y1:0,x2:0,y2:62,stroke:MK.brown,'stroke-width':19,'stroke-linecap':'round'},g);
+  const hand=el('g',{transform:'translate(0 66)'},g);const props={};
+  for(const k of ['pointer','glass','pencil','sign','banana','check'])props[k]=prop(k,hand);
+  el('circle',{cx:0,cy:0,r:13,fill:MK.tan},hand);return {g,sx,props};}
+const armL=arm(-38),armR=arm(38);
+const head=el('g',{},monJ);
+[-52,52].forEach(x=>{el('circle',{cx:x,cy:0,r:21,fill:MK.brown},head);el('circle',{cx:x,cy:0,r:11,fill:MK.tan},head);});
+el('circle',{cx:0,cy:0,r:52,fill:MK.brown},head);
+el('path',{d:'M-10,-50 Q-4,-70 4,-52 Q10,-68 14,-49',fill:MK.brown,stroke:MK.brown,'stroke-width':6,'stroke-linejoin':'round'},head);
+el('ellipse',{cx:-17,cy:-6,rx:21,ry:23,fill:MK.tan},head);el('ellipse',{cx:17,cy:-6,rx:21,ry:23,fill:MK.tan},head);
+el('ellipse',{cx:0,cy:18,rx:33,ry:23,fill:MK.tan},head);
+[-31,31].forEach(x=>el('circle',{cx:x,cy:17,r:8,fill:MK.pink,opacity:.6},head));
+const eyes=[-17,17].map(x=>{const g=el('g',{},head);el('ellipse',{cx:0,cy:0,rx:10,ry:12,fill:'#fff'},g);
+  const pu=el('g',{},g);el('circle',{cx:0,cy:0,r:6,fill:'#1E1E1E'},pu);el('circle',{cx:2,cy:-2,r:2,fill:'#fff'},pu);return {g,pu,x};});
+[-4,4].forEach(x=>el('circle',{cx:x,cy:10,r:2.3,fill:MK.dark},head));
+const smile=el('path',{d:'M-13,22 Q0,33 13,22',fill:'none',stroke:MK.dark,'stroke-width':3.5,'stroke-linecap':'round'},head);
+const mouthO=el('ellipse',{cx:0,cy:26,rx:10,ry:8,fill:'#A63A3A'},head);
+const thinkQ=el('g',{},monJ);
+[[62,-232,26,26],[96,-276,34,38]].forEach(([x,y,r,f])=>{el('circle',{cx:x,cy:y,r,fill:'#fff',stroke:C.blue,'stroke-width':4},thinkQ);
+  txt('?',{x,y:y+f*.36,'font-size':f,'font-weight':800,fill:C.blue,'text-anchor':'middle'},thinkQ);});
+const speech=el('g',{},mon);
+el('rect',{x:70,y:-300,width:300,height:76,rx:38,fill:'#fff',stroke:C.ink,'stroke-width':4},speech);
+el('path',{d:'M110,-226 L90,-196 L140,-226',fill:'#fff',stroke:C.ink,'stroke-width':4,'stroke-linejoin':'round'},speech);
+el('rect',{x:105,y:-229,width:40,height:6,fill:'#fff'},speech);
+txt('Cùng giải nhé!',{x:220,y:-250,'font-size':34,'font-weight':800,fill:C.ink,'text-anchor':'middle'},speech);
+// confetti for the answer page
+const conf=el('g',{display:V?'inline':'none'},ans);ans.insertBefore(conf,ansCard);
+const CONF=[...Array(46)].map((_,i)=>{const r=Math.sin(i*12.9898)*43758.5453,f=r-Math.floor(r);
+  return {x:40+((i*197)%1000),d:.55+f*.6,ph:i*.37,c:[C.red,C.gold,C.green,C.blue,'#8E5BD8','#D84B9A'][i%6],e:el('rect',{x:-7,y:-12,width:14,height:24,rx:3,fill:[C.red,C.gold,C.green,C.blue,'#8E5BD8','#D84B9A'][i%6]},conf)};});
+
+const POS={cover:[470,1400,1.15],perch:[900,500,.82],ans:[500,1312,.85]};
+function aimAt(tx,ty,mx,my,ms,sx){const dx=tx-(mx+ms*sx),dy=ty-(my-ms*90);return Math.atan2(-dx,dy)*180/Math.PI;}
+const G=(x,y)=>toScr({x,y}), CEN=G((A.x+B.x+Cc.x)/3,(A.y+B.y+Cc.y)/3);
+function pose(n,t,P,tg){const w=Math.sin(t*9);
+  switch(n){
+    case 'wave':return {aL:150,aR:-140+22*w,pL:'sign',pR:'',mo:.7,j:0,lx:0,ly:-1,tilt:4*w,q:0};
+    case 'point':return {aL:aimAt(tg[0],tg[1],...P,-38),aR:18,pL:'pointer',pR:'',mo:0,j:0,lx:-4,ly:0,tilt:-4,q:0};
+    case 'think':return {aL:12,aR:128,pL:'',pR:'',mo:0,j:0,lx:3,ly:-4,tilt:9,q:1};
+    case 'inspect':return {aL:aimAt(tg[0],tg[1],...P,-38)+6*Math.sin(t*1.7),aR:20,pL:'glass',pR:'',mo:0,j:0,lx:-4,ly:1,tilt:-5,q:0};
+    case 'cheer':return {aL:158+10*w,aR:-158-10*w,pL:'',pR:'',mo:1,j:1,lx:0,ly:-2,tilt:0,q:0};
+    case 'write':return {aL:14,aR:38+9*Math.sin(t*13),pL:'',pR:'pencil',mo:0,j:0,lx:-1,ly:4,tilt:-7,q:0};
+    case 'thumb':return {aL:14,aR:-150,pL:'',pR:'check',mo:.6,j:0,lx:0,ly:0,tilt:5,q:0};
+    case 'party':return {aL:150+18*w,aR:-150,pL:'',pR:'banana',mo:1,j:1,lx:0,ly:-2,tilt:5*w,q:0};}}
+function monkey(t){
+  if(!V)return;
+  // position: cover → perch beside the triangle → answer page
+  const pa=easeIO(seg(t,L(2)-.7,L(2)-.1)),pb=easeIO(seg(t,L(14)-.3,L(14)+.5));
+  const P=[0,1,2].map(i=>lerp(lerp(POS.cover[i],POS.perch[i],pa),POS.ans[i],pb));
+  const SEQ=[[0,'wave'],[L(2)-.4,'point',CEN],[L(3)+1.2,'point',toScr(D)],[L(4)+1.2,'point',toScr(Ept)],[L(5),'think'],
+    [L(6),'inspect',CEN],[L(7)+4.6,'point',G((B.x+Cc.x)/2,860)],[L(8),'write'],[L(9)+1.4,'cheer'],
+    [L(10),'inspect',G((A.x+D.x+Cc.x)/3,(A.y+D.y+Cc.y)/3)],[L(11)+1.8,'point',G((K.x+Cc.x)/2,(K.y+Cc.y)/2)],[L(12)+.4,'point',toScr(Ept)],
+    [L(12)+3.6,'write'],[L(13)+2.6,'cheer'],[L(13)+6,'thumb'],[L(14)-.2,'party']];
+  let i=0;while(i+1<SEQ.length&&t>=SEQ[i+1][0])i++;
+  const cur=pose(SEQ[i][1],t,P,SEQ[i][2]),prev=i?pose(SEQ[i-1][1],t,P,SEQ[i-1][2]):cur,b=easeIO(seg(t,SEQ[i][0],SEQ[i][0]+.4));
+  const v=k=>lerp(prev[k],cur[k],b),pk=k=>b<.5?prev[k]:cur[k];
+  const jy=-Math.abs(Math.sin(t*7))*26*v('j');
+  mon.setAttribute('transform',`translate(${P[0]} ${P[1]}) scale(${P[2]})`);
+  monJ.setAttribute('transform',`translate(0 ${jy})`);
+  tailG.setAttribute('transform',`rotate(${8*Math.sin(t*2.2)} 22 -30)`);
+  legs.forEach((l,k)=>l.g.setAttribute('transform',`translate(${l.x} 0) rotate(${(k?1:-1)*10*Math.sin(t*3)*(1-pb)})`));
+  for(const [Ar,ang,pr] of [[armL,v('aL'),pk('pL')],[armR,v('aR'),pk('pR')]]){
+    Ar.g.setAttribute('transform',`translate(${Ar.sx} -90) rotate(${ang})`);
+    for(const k in Ar.props){const on=k===pr;Ar.props[k].setAttribute('display',on?'inline':'none');
+      if(on){const u=Ar.props[k].querySelector('.up');if(u)u.setAttribute('transform',`rotate(${-ang})`);}}}
+  head.setAttribute('transform',`translate(0 -150) rotate(${v('tilt')})`);
+  const blink=((t+1.6)%3.3)<.14?.1:1;
+  eyes.forEach(e=>{e.g.setAttribute('transform',`translate(${e.x} -6) scale(1 ${blink})`);e.pu.setAttribute('transform',`translate(${v('lx')} ${v('ly')})`);});
+  const mo=v('mo');smile.setAttribute('opacity',1-mo);mouthO.setAttribute('opacity',mo);mouthO.setAttribute('ry',3+6*mo);
+  thinkQ.setAttribute('opacity',v('q'));thinkQ.setAttribute('transform',`translate(0 ${-6*Math.sin(t*3)})`);
+  speech.setAttribute('opacity',1-seg(t,L(2)-1,L(2)-.6));
+  const tc=t-L(14);
+  CONF.forEach(c=>{const y=-40+((tc*c.d*420+c.ph*300)%1500);c.e.setAttribute('transform',`translate(${c.x+30*Math.sin(tc*2+c.ph)} ${y}) rotate(${tc*200*c.d+c.ph*90})`);});
+}
 
 // ---------- subtitles ----------
 const sub=el('g',{});
-const subBg=el('rect',{x:0,y:968,width:1920,height:112,fill:'#22252B',opacity:.9},sub);
-const subT=txt('',{x:960,y:1038,'font-size':40,'font-weight':700,fill:'#fff','text-anchor':'middle'},sub);
+el('rect',V?{x:LY.PX,y:LY.subY,width:LY.PW,height:LY.subH,rx:24,fill:'#22252B',opacity:.9}:{x:0,y:LY.subY,width:LY.W,height:LY.subH,fill:'#22252B',opacity:.9},sub);
+const subT=txt('',{x:V?LY.PX+LY.PW/2:960,y:0,'font-size':LY.subF,'font-weight':700,fill:'#fff','text-anchor':'middle'},sub);
+// vertical: wrap long subtitles onto two lines (split at the space nearest the middle)
+function setSub(str){subT.textContent='';const two=V&&str.length>40;
+  let parts=[str];if(two){let m=str.length/2,best=-1,cost=i=>Math.abs(i-m)-(/[:.!?,]/.test(str[i-1])||/[→]/.test(str[i+1])?12:0)+(/[+×=]/.test(str[i-1])||/[×=]/.test(str[i+1])?12:0);
+    for(let i=0;i<str.length;i++)if(str[i]===' '&&(best<0||cost(i)<cost(best)))best=i;parts=[str.slice(0,best),str.slice(best+1)];}
+  const lh=LY.subF*1.3,y0=LY.subY+LY.subH/2+LY.subF*.36-(parts.length-1)*lh/2;
+  parts.forEach((p,i)=>{const ts=document.createElementNS(NS,'tspan');ts.setAttribute('x',subT.getAttribute('x'));ts.setAttribute('y',y0+i*lh);ts.textContent=p;subT.appendChild(ts);});}
 
 // ---------- render ----------
 const draw=(e,t,a,b)=>e.setAttribute('stroke-dashoffset',1-easeOut(seg(t,a,b)));
@@ -202,11 +337,12 @@ function render(t){
       b.setAttribute('transform',`translate(0 ${(1-easeOut(r))*-30})`);});}
   // answer
   fade(ans,t,L(14)-.1,.6);
-  const ap=seg(t,L(14),L(14)+.7);ansCard.setAttribute('transform',`translate(960 460) scale(${ap>0?easeBack(ap):.001}) translate(-960 -460)`);
-  pop(tip,t,L(14)+4.8,960,775);
+  monkey(t);
+  const ap=seg(t,L(14),L(14)+.7);ansCard.setAttribute('transform',`translate(${CX} ${ACY}) scale(${ap>0?easeBack(ap):.001}) translate(${-CX} ${-ACY})`);
+  pop(tip,t,L(14)+4.8,CX,TY);
   // subtitles
   let s='';for(let i=0;i<LS.length;i++)if(t>=LS[i]-.1&&t<LS[i]+LD[i]+.5)s=SUBS[i];
-  subT.textContent=s;show(sub,!!s);
+  setSub(s);show(sub,!!s);
 }
 function show(g,on){g.setAttribute('display',on?'inline':'none');}
 function mix(a,b,p){const h=s=>[1,3,5].map(i=>parseInt(s.substr(i,2),16));const x=h(a),y=h(b);return 'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*p)).join(',')+')';}

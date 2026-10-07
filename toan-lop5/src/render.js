@@ -3,7 +3,7 @@ const { spawn } = require('child_process');
 const FPS = 30;
 (async () => {
   const b = await chromium.launch();
-  const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+  const p = await b.newPage({ viewport: { width: +(process.env.W || 1920), height: +(process.env.H || 1080) } });
   p.on('pageerror', e => console.log('ERR', e.message));
   await p.goto('file://' + __dirname + '/' + (process.env.PAGE || 'scene.html'));
   await p.evaluate(() => document.fonts.ready);
