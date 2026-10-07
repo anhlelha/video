@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#F4F7FF"/>
+  <g fill="none" stroke="#0B1020" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="470" r="250"/>
+    <!-- smile built from circuit traces -->
+    <path d="M372 520H432L472 580H552L592 520H652"/>
+    <!-- traces exiting the face -->
+    <path d="M762 470H850V380"/>
+    <path d="M262 470H174V560"/>
+  </g>
+  <g fill="#0B1020">
+    <circle cx="850" cy="360" r="26"/><circle cx="174" cy="580" r="26"/>
+    <circle cx="372" cy="520" r="20"/><circle cx="652" cy="520" r="20"/>
+  </g>
+  <!-- eyes: one pixel square, one glowing wink dot -->
+  <rect x="402" y="370" width="60" height="60" rx="10" fill="#7B5CFF"/>
+  <circle cx="592" cy="400" r="30" fill="#00C2E0" filter="url(#glow)"/>
+  <text x="512" y="870" text-anchor="middle" font-family="'JetBrains Mono','DejaVu Sans Mono',monospace" font-weight="700" font-size="88" fill="#0B1020" letter-spacing="4">AI Solution</text>
+</svg>

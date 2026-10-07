@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00E5FF"/><stop offset="1" stop-color="#7B5CFF"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#0B1020"/>
+  <!-- subtle grid -->
+  <g stroke="#1A2340" stroke-width="2">
+    <path d="M0 256H1024M0 512H1024M0 768H1024M256 0V1024M512 0V1024M768 0V1024"/>
+  </g>
+  <g filter="url(#glow)" fill="none" stroke="url(#g)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <!-- antenna as circuit trace -->
+    <path d="M512 300V220H592"/>
+    <!-- head -->
+    <rect x="292" y="300" width="440" height="380" rx="120"/>
+    <!-- left eye: open -->
+    <!-- right eye: wink -->
+    <path d="M596 470l40 -26M596 470l40 26" stroke="#FF3DCB"/>
+    <!-- smile -->
+    <path d="M440 572q72 52 144 0"/>
+  </g>
+  <circle cx="612" cy="220" r="26" fill="#FF3DCB" filter="url(#glow)"/>
+  <rect x="402" y="436" width="56" height="68" rx="18" fill="#00E5FF" filter="url(#glow)"/>
+  <text x="512" y="842" text-anchor="middle" font-family="'JetBrains Mono','DejaVu Sans Mono',monospace" font-weight="700" font-size="88" fill="#E8F1FF" letter-spacing="4">AI<tspan fill="#00E5FF">_</tspan>Solution</text>
+</svg>
