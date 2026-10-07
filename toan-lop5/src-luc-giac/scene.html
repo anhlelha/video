@@ -1,0 +1,211 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:BVP;font-weight:400;src:url(../src/fonts/be-vietnam-pro-vietnamese-400-normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:BVP;font-weight:700;src:url(../src/fonts/be-vietnam-pro-vietnamese-700-normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:BVP;font-weight:800;src:url(../src/fonts/be-vietnam-pro-vietnamese-800-normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:BVP;font-weight:400;src:url(../src/fonts/be-vietnam-pro-latin-400-normal.woff2)}
+@font-face{font-family:BVP;font-weight:700;src:url(../src/fonts/be-vietnam-pro-latin-700-normal.woff2)}
+@font-face{font-family:BVP;font-weight:800;src:url(../src/fonts/be-vietnam-pro-latin-800-normal.woff2)}
+@font-face{font-family:BVP;font-weight:400;src:url(../src/fonts/be-vietnam-pro-latin-ext-400-normal.woff2);unicode-range:U+0100-02AF,U+2000-218F}
+@font-face{font-family:BVP;font-weight:700;src:url(../src/fonts/be-vietnam-pro-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+2000-218F}
+html,body{margin:0;background:#FBF8F1}
+svg{display:block;font-family:BVP,sans-serif}
+.pt{font-family:"DejaVu Serif",serif;font-style:italic;font-weight:700}
+</style></head>
+<body>
+<svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script src="timings.js"></script>
+<script>
+const NS='http://www.w3.org/2000/svg', svg=document.getElementById('stage');
+function el(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;}
+function txt(s,a,p){const e=el('text',a,p);e.textContent=s;return e;}
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), seg=(t,a,b)=>clamp((t-a)/(b-a));
+const easeOut=p=>1-Math.pow(1-p,3), easeBack=p=>{const c=1.9;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2);};
+const easeIO=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2, bump=p=>Math.sin(Math.PI*clamp(p));
+const L=i=>LS[i-1], E=i=>LS[i-1]+LD[i-1];
+const C={bg:'#FBF8F1',ink:'#22252B',muted:'#6B6F78',blue:'#3B7DD8',orange:'#E8843B',green:'#2E9E5B',gold:'#F2B33D',goldT:'#B97A0C',red:'#D9473B',panel:'#FFFFFF'};
+// ring fills [main, alt-for-sides] and strokes
+const RF=[['#F4A261','#F4A261'],['#4DB57A','#8FD3AA'],['#5B95E0','#A3C4F0'],['#F2B33D','#F8D68E']];
+const ringCol=k=>k===0?RF[0]:RF[1+((k-1)%3)];
+const RTXT=[C.orange,C.green,C.blue,C.goldT];
+const STROKE='#1D3557';
+
+// ---------- hex grid (flat-top, axial coords) ----------
+const DIRS=[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+function cells(n){const out=[{q:0,r:0,k:0,j:0,s:0}];
+  for(let k=1;k<=n;k++){let q=DIRS[4][0]*k,r=DIRS[4][1]*k,j=0;
+    for(let d=0;d<6;d++)for(let i=0;i<k;i++){out.push({q,r,k,j,s:d});j++;q+=DIRS[d][0];r+=DIRS[d][1];}}
+  return out.map(c=>Object.assign(c,{x:1.5*c.q,y:Math.sqrt(3)*(c.r+c.q/2)}));}
+const HEXPTS=[0,1,2,3,4,5].map(i=>{const a=Math.PI/3*i;return (.95*Math.cos(a)).toFixed(4)+','+(.95*Math.sin(a)).toFixed(4);}).join(' ');
+function makeFig(n,parent){const g=el('g',{},parent);
+  const cs=cells(n).map(c=>{c.g=el('g',{},g);
+    c.poly=el('polygon',{points:HEXPTS,fill:ringCol(c.k)[0],stroke:STROKE,'stroke-width':3,'stroke-linejoin':'round','vector-effect':'non-scaling-stroke'},c.g);
+    return c;});
+  return {g,cs};}
+function place(c,s){c.g.setAttribute('transform',`translate(${c.x} ${c.y}) scale(${Math.max(s,.001)})`);}
+const setT=(g,x,y,R)=>g.setAttribute('transform',`translate(${x} ${y}) scale(${R})`);
+
+// ---------- problem figures ----------
+const FR=46, FY=455, FX=[201,432,801];
+const probG=el('g',{});
+const figs=[0,1,2].map(n=>{const f=makeFig(n,probG);setT(f.g,FX[n],FY,FR);return f;});
+const figLab=[0,1,2].map(n=>{const g=el('g',{opacity:0},probG);
+  txt('Hình '+(n+1),{x:FX[n],y:735,'font-size':44,'font-weight':800,fill:C.ink,'text-anchor':'middle'},g);return g;});
+const figCnt=['1 hình','7 hình','19 hình'].map((s,n)=>{const g=el('g',{opacity:0},probG);
+  el('rect',{x:FX[n]-85,y:762,width:170,height:60,rx:30,fill:RTXT[n]},g);
+  txt(s,{x:FX[n],y:804,'font-size':36,'font-weight':800,fill:'#fff','text-anchor':'middle'},g);return g;});
+
+// ---------- main figure (up to figure 10 = 9 rings) ----------
+const M=makeFig(9);
+// labels inside cells: counting numbers (step 1) and ring index (step 2)
+M.cs.forEach(c=>{c.num=txt(String(c.k===0?1:c.j+1),{x:0,y:.24,'font-size':.66,'font-weight':800,fill:'#fff','text-anchor':'middle',opacity:0},c.g);
+  if(c.k>0&&c.q===c.k&&c.r===-c.k)c.ring=txt(String(c.k),{x:0,y:.32,'font-size':.9,'font-weight':800,fill:'#fff','text-anchor':'middle',opacity:0},c.g);});
+// side badges for rings 2 and 3
+function badges(k){return [0,1,2,3,4,5].map(s=>{const sc=M.cs.filter(c=>c.k===k&&c.s===s);
+  // midpoint of the side (k+1 cells incl. corner of next side) pushed outward
+  const all=sc.concat(M.cs.filter(c=>c.k===k&&c.s===(s+1)%6&&c.j%k===0));
+  const mx=all.reduce((a,c)=>a+c.x,0)/all.length,my=all.reduce((a,c)=>a+c.y,0)/all.length,d=Math.hypot(mx,my),f=(d+1.45)/d;
+  const g=el('g',{opacity:0},M.g);el('circle',{cx:0,cy:0,r:.42,fill:'#fff',stroke:RTXT[k],'stroke-width':4,'vector-effect':'non-scaling-stroke'},g);
+  txt(String(k),{x:0,y:.2,'font-size':.56,'font-weight':800,fill:RTXT[k],'text-anchor':'middle'},g);
+  return {g,x:mx*f,y:my*f};});}
+const B2=badges(2),B3=badges(3);
+
+// ---------- right panel ----------
+const PX=1170,PW=690;
+const panel=el('g',{opacity:0});
+el('rect',{x:PX,y:120,width:PW,height:790,rx:28,fill:C.panel,stroke:'#E8E3D8','stroke-width':3},panel);
+const items=[];
+function item(g,t0,t1){items.push({g,t0,t1});g.setAttribute('opacity',0);return g;}
+function ptext(s,y,t0,t1,o={}){const g=el('g',{},panel);
+  if(o.box){el('rect',{x:PX+30,y:y-50,width:PW-60,height:74,rx:16,fill:o.box},g);}
+  txt(s,{x:PX+50,y,'font-size':o.size||36,'font-weight':o.w||400,fill:o.color||C.ink},g);return item(g,t0,t1);}
+function header(s,y,t0,t1,color){const g=el('g',{},panel);
+  el('rect',{x:PX+30,y:y-50,width:230,height:66,rx:33,fill:color},g);
+  txt(s,{x:PX+145,y:y-5,'font-size':38,'font-weight':800,fill:'#fff','text-anchor':'middle'},g);return item(g,t0,t1);}
+// given
+const g2=L(6)-.3;
+header('Đề bài',205,L(2),g2,C.ink);
+ptext('Hình 1: 1 hình',300,L(2)+1,g2,{w:700});
+ptext('Hình 2: 1 + 6 = 7 hình',380,L(3)+4.4,g2,{w:700});
+ptext('Hình 3: 19 hình',460,L(4)+4.6,g2,{w:700});
+ptext('Hình 10: ? hình',560,L(5)+.3,g2,{w:800,size:40,color:C.green,box:'#E3F5EA'});
+// step 1
+const s1=L(6),s1e=L(10)-.3;
+header('Bước 1',205,s1,s1e,C.blue);
+ptext('Đếm theo từng vòng',290,s1+.8,s1e,{size:34,color:C.muted});
+ptext('Ở giữa: 1 hình',365,s1+2.5,s1e,{w:700,color:C.orange});
+ptext('Vòng 1: 6 hình',440,L(7)+.3,s1e,{w:700,color:C.green});
+ptext('Vòng 2: 12 hình',515,L(7)+2.6,s1e,{w:700,color:C.blue});
+ptext('  (6 cạnh × 2 hình = 12)',580,L(8)+5.6,s1e,{size:32,color:C.blue});
+ptext('Vòng 3: 6 × 3 = 18 hình',660,L(9)+4,s1e,{w:700,color:C.goldT});
+ptext('Mỗi vòng thêm 6 hình!',780,L(9)+6.6,s1e,{w:800,size:38,box:'#FFF1D6'});
+// step 2
+const s2=L(10),s2e=L(16)-.3;
+header('Bước 2',205,s2,s2e,C.green);
+ptext('Hình 10 = 1 hình giữa + 9 vòng',290,s2+1.2,s2e,{w:700,size:34});
+ptext('1 + 6×1 + 6×2 + … + 6×9',370,L(11)+.6,s2e,{size:35});
+ptext('= 1 + 6 × (1 + 2 + … + 9)',445,L(12)+1.2,s2e,{size:35,w:700});
+ptext('1 + 2 + … + 9',525,L(13)+.6,s2e,{size:34,color:C.muted});
+ptext('= (1 + 9) × 9 : 2 = 45',585,L(13)+2.6,s2e,{size:34,w:700,color:C.blue});
+ptext('1 + 6 × 45 = 1 + 270 = 271',690,L(14)+1,s2e,{size:38,w:800,color:C.green,box:'#E3F5EA'});
+ptext('Thử lại hình 3: 1 + 6 × 3 = 19 ✓',800,L(15)+1.5,s2e,{size:32,w:700,color:C.goldT});
+
+// ---------- title & answer cards ----------
+const title=el('g',{});
+el('rect',{x:0,y:0,width:1920,height:1080,fill:C.bg},title);
+txt('TOÁN LỚP 5',{x:960,y:330,'font-size':44,'font-weight':700,fill:C.orange,'text-anchor':'middle','letter-spacing':8},title);
+txt('Quy luật hình lục giác',{x:960,y:450,'font-size':110,'font-weight':800,fill:C.ink,'text-anchor':'middle'},title);
+txt('Hình thứ 10 có bao nhiêu hình lục giác?',{x:960,y:550,'font-size':46,fill:C.muted,'text-anchor':'middle'},title);
+const tFig=makeFig(1,title);
+const ans=el('g',{opacity:0});
+el('rect',{x:0,y:0,width:1920,height:1080,fill:C.bg,opacity:.94},ans);
+const ansCard=el('g',{},ans);
+el('rect',{x:460,y:230,width:1000,height:440,rx:40,fill:'#fff',stroke:C.green,'stroke-width':8},ansCard);
+txt('Đáp số',{x:960,y:350,'font-size':56,'font-weight':700,fill:C.muted,'text-anchor':'middle'},ansCard);
+txt('271',{x:960,y:520,'font-size':150,'font-weight':800,fill:C.green,'text-anchor':'middle'},ansCard);
+txt('hình lục giác',{x:960,y:610,'font-size':56,'font-weight':700,fill:C.ink,'text-anchor':'middle'},ansCard);
+const tip=el('g',{opacity:0},ans);
+el('rect',{x:360,y:720,width:1200,height:110,rx:55,fill:C.gold},tip);
+txt('💡 Đếm theo vòng – mỗi vòng thêm 6 hình!',{x:960,y:793,'font-size':50,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);
+
+// ---------- subtitles ----------
+const sub=el('g',{});
+el('rect',{x:0,y:968,width:1920,height:112,fill:'#22252B',opacity:.9},sub);
+const subT=txt('',{x:960,y:1038,'font-size':40,'font-weight':700,fill:'#fff','text-anchor':'middle'},sub);
+
+// ---------- render ----------
+const fade=(e,t,a,b,c,d,max=1)=>{let o=easeOut(seg(t,a,a+(b||.5)));if(c!==undefined)o*=1-seg(t,c,c+(d||.5));e.setAttribute('opacity',o*max);};
+function pop(e,t,a,cx,cy,c,d){const p=seg(t,a,a+.5);let o=clamp(p*3);if(c!==undefined)o*=1-seg(t,c,c+(d||.5));const s=p>0?easeBack(p):0;
+  e.setAttribute('opacity',o);e.setAttribute('transform',`translate(${cx} ${cy}) scale(${Math.max(s,.001)}) translate(${-cx} ${-cy})`);}
+const popS=(t,a)=>{const p=seg(t,a,a+.45);return p>0?easeBack(p):0;};
+function show(g,on){g.setAttribute('display',on?'inline':'none');}
+const lerp=(a,b,p)=>a+(b-a)*p;
+
+function render(t){
+  // title
+  const to=1-seg(t,L(2)-.6,L(2)-.1);title.setAttribute('opacity',to);show(title,to>0);
+  setT(tFig.g,960,770+Math.sin(t*2)*8,52);
+  tFig.cs.forEach(c=>place(c,c.k===0?1:popS(t,.3+c.j*.15)));
+  fade(panel,t,L(2)-.2,.6);
+
+  // problem phase
+  const mainOn=t>=L(6)-.3;
+  const pOut=1-seg(t,L(6)-.3,L(6)+.3);
+  probG.setAttribute('opacity',pOut);show(probG,pOut>0);show(figs[2].g,!mainOn);
+  figs[0].cs.forEach(c=>place(c,popS(t,L(2)+.3)));
+  figs[1].cs.forEach(c=>place(c,c.k===0?popS(t,L(3)):popS(t,L(3)+1.2+c.j*.3)));
+  figs[2].cs.forEach(c=>place(c,c.k<2?popS(t,L(4)):popS(t,L(4)+1.4+c.j*.16)));
+  [0,1,2].forEach(n=>{fade(figLab[n],t,L(2+n)+.2,.4);pop(figCnt[n],t,n===0?L(2)+1:L(2+n)+4.4,FX[n],792);});
+
+  // main figure
+  show(M.g,mainOn);
+  if(mainOn){
+    const p1=easeIO(seg(t,L(6)-.3,L(6)+.8)),p2=easeIO(seg(t,L(10)+.2,L(10)+1.4));
+    setT(M.g,lerp(lerp(FX[2],570,p1),570,p2),lerp(lerp(FY,505,p1),505,p2),lerp(lerp(FR,62,p1),25,p2));
+    const dimIn=seg(t,L(6)+2,L(6)+2.5), und=[0,seg(t,L(7)+.3,L(7)+.7),seg(t,L(7)+2.6,L(7)+3)];
+    const chk=seg(t,L(15)+.3,L(15)+.8)*(1-seg(t,L(16)-.3,L(16)));
+    const pulseRing=t>L(11)+.6&&t<L(11)+6.6?1+Math.floor((t-L(11)-.6)/.66):-1;
+    const numOut=1-seg(t,L(8),L(8)+.4);
+    for(const c of M.cs){
+      let s=1;
+      if(c.k===3)s=popS(t,L(9)+.6+c.j*.04);
+      else if(c.k>=4)s=popS(t,L(10)+1.6+(c.k-4)*.55+c.j/(6*c.k)*.4);
+      if(c.k===0)s*=1+.18*bump(seg(t,L(6)+2.5,L(6)+3.3));
+      let o=1;
+      if(c.k>=1&&c.k<=2)o=1-.7*clamp(dimIn-und[c.k]);
+      if(c.k>=3)o=1-.85*chk;
+      c.g.setAttribute('opacity',o);place(c,s);
+      // side alternation for rings 2 and 3
+      let alt=0;
+      if(c.k===2)alt=(c.s%2)*seg(t,L(8)+2.4+c.s*.45,L(8)+2.7+c.s*.45)*(1-seg(t,L(10),L(10)+.4));
+      if(c.k===3)alt=(c.s%2)*seg(t,L(9)+2.4+c.s*.3,L(9)+2.7+c.s*.3)*(1-seg(t,L(10),L(10)+.4));
+      c.poly.setAttribute('fill',alt>0?mix(ringCol(c.k)[0],ringCol(c.k)[1],alt):ringCol(c.k)[0]);
+      const hl=c.k===pulseRing;
+      c.poly.setAttribute('stroke',hl?C.red:STROKE);c.poly.setAttribute('stroke-width',hl?4:3);
+      // counting numbers
+      let no=0;
+      if(c.k===0)no=seg(t,L(6)+2.5,L(6)+2.8);
+      if(c.k===1)no=seg(t,L(7)+.4+c.j*.22,L(7)+.6+c.j*.22);
+      if(c.k===2)no=seg(t,L(7)+2.7+c.j*.14,L(7)+2.9+c.j*.14);
+      c.num.setAttribute('opacity',no*numOut);
+      if(c.ring)c.ring.setAttribute('opacity',seg(t,L(10)+1.6+Math.max(0,c.k-4)*.55+(c.k<4?(c.k-1)*.3-.6:0)+.3,L(10)+2.4+Math.max(0,c.k-4)*.55+(c.k<4?(c.k-1)*.3-.6:0)));
+    }
+    B2.forEach((b,s)=>pop(b.g,t,L(8)+2.4+s*.45,0,0,L(9)+2,.4));
+    B3.forEach((b,s)=>pop(b.g,t,L(9)+2.4+s*.3,0,0,L(10)-.3,.4));
+    [...B2,...B3].forEach(b=>{const tr=b.g.getAttribute('transform');b.g.setAttribute('transform',`translate(${b.x} ${b.y}) `+tr);});
+  }
+  // panel items
+  for(const it of items){const p=easeOut(seg(t,it.t0,it.t0+.45)),q=1-seg(t,it.t1,it.t1+.4);
+    it.g.setAttribute('opacity',p*q);it.g.setAttribute('transform',`translate(${(1-p)*30} 0)`);}
+  // answer
+  fade(ans,t,L(16)-.1,.6);
+  const ap=seg(t,L(16),L(16)+.7);ansCard.setAttribute('transform',`translate(960 450) scale(${ap>0?easeBack(ap):.001}) translate(-960 -450)`);
+  pop(tip,t,L(16)+5,960,775);
+  // subtitles
+  let s='';for(let i=0;i<LS.length;i++)if(t>=LS[i]-.1&&t<LS[i]+LD[i]+.5)s=SUBS[i];
+  subT.textContent=s;show(sub,!!s);
+}
+function mix(a,b,p){const h=s=>[1,3,5].map(i=>parseInt(s.substr(i,2),16));const x=h(a),y=h(b);return 'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*p)).join(',')+')';}
+render(0);
+</script></body></html>
