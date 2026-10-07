@@ -41,6 +41,9 @@ const RF=[['#F4A261','#F4A261'],['#4DB57A','#8FD3AA'],['#5B95E0','#A3C4F0'],['#F
 const ringCol=k=>k===0?RF[0]:RF[1+((k-1)%3)];
 const RTXT=[C.orange,C.green,C.blue,C.goldT];
 const STROKE='#1D3557';
+// 6 group (sector) hues: each ring k = 6 equal groups of k cells
+const HUE=['#E8573B','#F2B33D','#2E9E5B','#3B7DD8','#8E5BD8','#D84B9A'];
+const secCol=c=>c.k===0?RF[0][0]:(c.k%2?HUE[c.s]:toHex(mix(HUE[c.s],'#FFFFFF',.55)));
 
 // ---------- hex grid (flat-top, axial coords) ----------
 const DIRS=[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
@@ -71,15 +74,15 @@ const figCnt=['1 hình','7 hình','19 hình'].map((s,n)=>{const g=el('g',{opacit
 const M=makeFig(9);
 // labels inside cells: counting numbers (step 1) and ring index (step 2)
 M.cs.forEach(c=>{c.num=txt(String(c.k===0?1:c.j+1),{x:0,y:.24,'font-size':.66,'font-weight':800,fill:'#fff','text-anchor':'middle',opacity:0},c.g);
-  if(c.k>0&&c.q===c.k&&c.r===-c.k)c.ring=txt(String(c.k),{x:0,y:.32,'font-size':.9,'font-weight':800,fill:'#fff','text-anchor':'middle',opacity:0},c.g);});
-// side badges for rings 2 and 3
-function badges(k){return [0,1,2,3,4,5].map(s=>{const sc=M.cs.filter(c=>c.k===k&&c.s===s);
-  // midpoint of the side (k+1 cells incl. corner of next side) pushed outward
-  const all=sc.concat(M.cs.filter(c=>c.k===k&&c.s===(s+1)%6&&c.j%k===0));
-  const mx=all.reduce((a,c)=>a+c.x,0)/all.length,my=all.reduce((a,c)=>a+c.y,0)/all.length,d=Math.hypot(mx,my),f=(d+1.45)/d;
-  const g=el('g',{opacity:0},M.g);el('circle',{cx:0,cy:0,r:.42,fill:'#fff',stroke:RTXT[k],'stroke-width':4,'vector-effect':'non-scaling-stroke'},g);
-  txt(String(k),{x:0,y:.2,'font-size':.56,'font-weight':800,fill:RTXT[k],'text-anchor':'middle'},g);
-  return {g,x:mx*f,y:my*f};});}
+  if(c.k>0&&c.q===c.k&&c.r===-c.k)c.ring=txt(String(c.k),{x:0,y:.32,'font-size':.9,'font-weight':800,fill:STROKE,'text-anchor':'middle',opacity:0},c.g);});
+// group direction (unit vector from centre to the group's centroid) + group badges for rings 2 and 3
+M.cs.forEach(c=>{if(!c.k)return;const g=M.cs.filter(d=>d.k===c.k&&d.s===c.s);
+  const mx=g.reduce((a,d)=>a+d.x,0)/g.length,my=g.reduce((a,d)=>a+d.y,0)/g.length,n=Math.hypot(mx,my);
+  Object.assign(c,{ux:mx/n,uy:my/n,gn:n});});
+function badges(k){return [0,1,2,3,4,5].map(s=>{const c=M.cs.find(d=>d.k===k&&d.s===s);
+  const g=el('g',{opacity:0},M.g);el('circle',{cx:0,cy:0,r:.5,fill:'#fff',stroke:HUE[s],'stroke-width':4,'vector-effect':'non-scaling-stroke'},g);
+  txt(String(k),{x:0,y:.24,'font-size':.68,'font-weight':800,fill:HUE[s],'text-anchor':'middle'},g);
+  return {g,ux:c.ux,uy:c.uy,n:c.gn};});}
 const B2=badges(2),B3=badges(3);
 
 // ---------- right panel ----------
@@ -108,9 +111,9 @@ ptext('Đếm theo từng vòng',LY.Y1[1],s1+.8,s1e,{size:34,color:C.muted});
 ptext('Ở giữa: 1 hình',LY.Y1[2],s1+2.5,s1e,{w:700,color:C.orange});
 ptext('Vòng 1: 6 hình',LY.Y1[3],L(7)+.3,s1e,{w:700,color:C.green});
 ptext('Vòng 2: 12 hình',LY.Y1[4],L(7)+2.6,s1e,{w:700,color:C.blue});
-ptext('  (6 cạnh × 2 hình = 12)',LY.Y1[5],L(8)+5.6,s1e,{size:32,color:C.blue});
-ptext('Vòng 3: 6 × 3 = 18 hình',LY.Y1[6],L(9)+4,s1e,{w:700,color:C.goldT});
-ptext('Mỗi vòng thêm 6 hình!',LY.Y1[7],L(9)+6.6,s1e,{w:800,size:38,box:'#FFF1D6'});
+ptext('  (6 nhóm × 2 hình = 12)',LY.Y1[5],L(8)+7.6,s1e,{size:32,color:C.blue});
+ptext('Vòng 3: 6 nhóm × 3 = 18 hình',LY.Y1[6],L(9)+4.5,s1e,{w:700,color:C.goldT});
+ptext('Mỗi vòng thêm 6 hình!',LY.Y1[7],L(9)+7.5,s1e,{w:800,size:38,box:'#FFF1D6'});
 // step 2
 const s2=L(10),s2e=L(16)-.3;
 header('Bước 2',LY.Y2[0],s2,s2e,C.green);
@@ -154,7 +157,7 @@ el('rect',V?{x:LY.PX,y:LY.subY,width:LY.PW,height:LY.subH,rx:24,fill:'#22252B',o
 const subT=txt('',{x:V?LY.PX+LY.PW/2:960,y:0,'font-size':LY.subF,'font-weight':700,fill:'#fff','text-anchor':'middle'},sub);
 // vertical: wrap long subtitles onto two lines (split at the space nearest the middle)
 function setSub(str){subT.textContent='';const two=V&&str.length>40;
-  let parts=[str];if(two){let m=str.length/2,best=-1,cost=i=>Math.abs(i-m)-(/[:.!?,]/.test(str[i-1])||/[→=]/.test(str[i+1])?12:0)+(/[+×]/.test(str[i-1])?12:0);
+  let parts=[str];if(two){let m=str.length/2,best=-1,cost=i=>Math.abs(i-m)-(/[:.!?,]/.test(str[i-1])||/[→]/.test(str[i+1])?12:0)+(/[+×]/.test(str[i-1])?12:0);
     for(let i=0;i<str.length;i++)if(str[i]===' '&&(best<0||cost(i)<cost(best)))best=i;parts=[str.slice(0,best),str.slice(best+1)];}
   const lh=LY.subF*1.3,y0=LY.subY+LY.subH/2+LY.subF*.36-(parts.length-1)*lh/2;
   parts.forEach((p,i)=>{const ts=document.createElementNS(NS,'tspan');ts.setAttribute('x',subT.getAttribute('x'));ts.setAttribute('y',y0+i*lh);ts.textContent=p;subT.appendChild(ts);});}
@@ -188,25 +191,32 @@ function render(t){
   if(mainOn){
     const p1=easeIO(seg(t,L(6)-.3,L(6)+.8)),p2=easeIO(seg(t,L(10)+.2,L(10)+1.4));
     const [ax,ay,ar]=LY.s1,[bx,by,br]=LY.s2;
-    setT(M.g,lerp(lerp(FX[2],ax,p1),bx,p2),lerp(lerp(FY,ay,p1),by,p2),lerp(lerp(FR,ar,p1),br,p2));
+    // group colouring (gc*) and explode (e*) for rings 2 and 3
+    const gc2=s=>seg(t,L(8)+3+s*.3,L(8)+3.3+s*.3)*(1-seg(t,L(9)+.6,L(9)+1.2)), gc3=s=>seg(t,L(9)+1.2+s*.2,L(9)+1.5+s*.2);
+    const e2=easeIO(seg(t,L(8)+5,L(8)+5.8))*(1-easeIO(seg(t,L(8)+10.3,L(8)+11))),
+          e3=easeIO(seg(t,L(9)+2.6,L(9)+3.4))*(1-easeIO(seg(t,L(9)+7,L(9)+7.8)));
+    const p10=seg(t,L(10)+.2,L(10)+1.2), zoom=1-.1*e2-.22*e3;
+    setT(M.g,lerp(lerp(FX[2],ax,p1),bx,p2),lerp(lerp(FY,ay,p1),by,p2),lerp(lerp(FR,ar,p1),br,p2)*zoom);
     const dimIn=seg(t,L(6)+2,L(6)+2.5), und=[0,seg(t,L(7)+.3,L(7)+.7),seg(t,L(7)+2.6,L(7)+3)];
     const chk=seg(t,L(15)+.3,L(15)+.8)*(1-seg(t,L(16)-.3,L(16)));
     const pulseRing=t>L(11)+.6&&t<L(11)+6.6?1+Math.floor((t-L(11)-.6)/.66):-1;
     const numOut=1-seg(t,L(8),L(8)+.4);
     for(const c of M.cs){
       let s=1;
-      if(c.k===3)s=popS(t,L(9)+.6+c.j*.04);
+      if(c.k===3)s=popS(t,L(9)+.1+c.j*.04);
       else if(c.k>=4)s=popS(t,L(10)+1.6+(c.k-4)*.55+c.j/(6*c.k)*.4);
       if(c.k===0)s*=1+.18*bump(seg(t,L(6)+2.5,L(6)+3.3));
       let o=1;
       if(c.k>=1&&c.k<=2)o=1-.7*clamp(dimIn-und[c.k]);
       if(c.k>=3)o=1-.85*chk;
-      c.g.setAttribute('opacity',o);place(c,s);
-      // side alternation for rings 2 and 3
-      let alt=0;
-      if(c.k===2)alt=(c.s%2)*seg(t,L(8)+2.4+c.s*.45,L(8)+2.7+c.s*.45)*(1-seg(t,L(10),L(10)+.4));
-      if(c.k===3)alt=(c.s%2)*seg(t,L(9)+2.4+c.s*.3,L(9)+2.7+c.s*.3)*(1-seg(t,L(10),L(10)+.4));
-      c.poly.setAttribute('fill',alt>0?mix(ringCol(c.k)[0],ringCol(c.k)[1],alt):ringCol(c.k)[0]);
+      c.g.setAttribute('opacity',o);
+      const off=(c.k===2?e2:c.k===3?e3:0)*1.3;
+      c.g.setAttribute('transform',`translate(${c.x+(c.ux||0)*off} ${c.y+(c.uy||0)*off}) scale(${Math.max(s,.001)})`);
+      // ring colour → group hue (step 1) → sector colours for figure 10 (step 2)
+      const gA=c.k===2?gc2(c.s):c.k===3?gc3(c.s):0;
+      let f=gA>0?mix(ringCol(c.k)[0],HUE[c.s],gA):ringCol(c.k)[0];
+      if(p10>0)f=mix(f.startsWith('#')?f:toHex(f),secCol(c),p10);
+      c.poly.setAttribute('fill',f);
       const hl=c.k===pulseRing;
       c.poly.setAttribute('stroke',hl?C.red:STROKE);c.poly.setAttribute('stroke-width',hl?4:3);
       // counting numbers
@@ -217,9 +227,10 @@ function render(t){
       c.num.setAttribute('opacity',no*numOut);
       if(c.ring)c.ring.setAttribute('opacity',seg(t,L(10)+1.6+Math.max(0,c.k-4)*.55+(c.k<4?(c.k-1)*.3-.6:0)+.3,L(10)+2.4+Math.max(0,c.k-4)*.55+(c.k<4?(c.k-1)*.3-.6:0)));
     }
-    B2.forEach((b,s)=>pop(b.g,t,L(8)+2.4+s*.45,0,0,L(9)+2,.4));
-    B3.forEach((b,s)=>pop(b.g,t,L(9)+2.4+s*.3,0,0,L(10)-.3,.4));
-    [...B2,...B3].forEach(b=>{const tr=b.g.getAttribute('transform');b.g.setAttribute('transform',`translate(${b.x} ${b.y}) `+tr);});
+    const badge=(b,e,t0,t1)=>{pop(b.g,t,t0,0,0,t1,.4);const d=b.n+1.3*e+1.35;
+      b.g.setAttribute('transform',`translate(${b.ux*d} ${b.uy*d}) `+b.g.getAttribute('transform'));};
+    B2.forEach((b,s)=>badge(b,e2,L(8)+5.9+s*.15,L(8)+10.2));
+    B3.forEach((b,s)=>badge(b,e3,L(9)+3.4+s*.15,L(9)+6.9));
   }
   // panel items
   for(const it of items){const p=easeOut(seg(t,it.t0,it.t0+.45)),q=1-seg(t,it.t1,it.t1+.4);
@@ -232,6 +243,7 @@ function render(t){
   let s='';for(let i=0;i<LS.length;i++)if(t>=LS[i]-.1&&t<LS[i]+LD[i]+.5)s=SUBS[i];
   setSub(s);show(sub,!!s);
 }
+function toHex(r){return '#'+r.match(/\d+/g).map(v=>(+v).toString(16).padStart(2,'0')).join('');}
 function mix(a,b,p){const h=s=>[1,3,5].map(i=>parseInt(s.substr(i,2),16));const x=h(a),y=h(b);return 'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*p)).join(',')+')';}
 render(0);
 </script></body></html>

@@ -5,8 +5,8 @@ Hình thứ ba: ghép thêm một vòng lục giác nữa bên ngoài. Tổng c�
 Hỏi: cứ theo quy luật đó, hình thứ 10 có bao nhiêu hình lục giác?|Hình thứ 10 có bao nhiêu hình lục giác?
 Bước một. Ta đếm theo từng vòng. Ở chính giữa luôn có 1 hình.|Bước 1: Đếm theo từng vòng. Ở giữa: 1 hình.
 Vòng thứ nhất có 6 hình. Vòng thứ hai có 12 hình.|Vòng 1: 6 hình. Vòng 2: 12 hình.
-Vì sao lại là 12? Vòng thứ hai có 6 cạnh, mỗi cạnh có 2 hình. 6 nhân 2, bằng 12.|Vòng 2: 6 cạnh, mỗi cạnh 2 hình → 6 × 2 = 12
-Cứ thế, vòng thứ ba có 6 cạnh, mỗi cạnh 3 hình: 6 nhân 3, bằng 18. Mỗi vòng mới lại nhiều hơn vòng trước 6 hình.|Vòng 3: 6 × 3 = 18. Mỗi vòng thêm 6 hình.
+Vì sao lại là 12? Ta chia vòng thứ hai thành 6 nhóm bằng nhau, mỗi nhóm có 2 hình. 6 nhân 2, bằng 12.|Vòng 2: chia thành 6 nhóm, mỗi nhóm 2 hình → 6 × 2 = 12
+Vòng thứ ba cũng chia được thành 6 nhóm, mỗi nhóm 3 hình. 6 nhân 3, bằng 18. Mỗi vòng mới lại nhiều hơn vòng trước 6 hình.|Vòng 3: 6 nhóm × 3 hình = 18. Mỗi vòng thêm 6 hình.
 Bước hai. Hình thứ 10 gồm 1 hình ở giữa, và 9 vòng bao quanh.|Bước 2: Hình 10 = 1 hình giữa + 9 vòng.
 Số hình là: 1, cộng 6 nhân 1, cộng 6 nhân 2, cứ thế cho đến 6 nhân 9.|1 + 6 × 1 + 6 × 2 + … + 6 × 9
 Ta gom số 6 ra ngoài: 1, cộng 6 nhân với tổng từ 1 đến 9.|= 1 + 6 × (1 + 2 + … + 9)
