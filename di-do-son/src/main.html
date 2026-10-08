@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đi Đồ Sơn</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #F4E3C3; }
+  body, svg text { font-family: 'Be Vietnam Pro', sans-serif; }
+  svg { position: absolute; inset: 0; }
+  #cap { position: absolute; left: 0; right: 0; bottom: 46px; text-align: center; pointer-events: none; }
+  #cap span { display: inline-block; max-width: 1560px; padding: 12px 32px; border-radius: 14px;
+    background: rgba(30, 24, 18, .72); color: #FFF8E8; font-size: 42px; font-weight: 700; line-height: 1.35; }
+  #cap b { color: #F2C14E; margin-right: 12px; }
+</style>
+</head>
+<body>
+<svg id="stage" width="1920" height="1080" viewBox="0 0 1920 1080"><defs id="defs"></defs></svg>
+<div id="cap"><span></span></div>
+<script src="timeline.js"></script>
+<script src="lib.js"></script>
+<script src="lib2.js"></script>
+<script>const SC = {};</script>
+<script src="s1.js"></script>
+<script src="s2.js"></script>
+<script src="s3.js"></script>
+<script src="s4.js"></script>
+<script>
+const grain = paperTexture(svg);
+const dip = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#FFF8E8', opacity: 0 });
+const capEl = document.querySelector('#cap span');
+const COL = { 'Ông': '#F2C14E', 'Bố': '#8FC3F0', 'Mẹ': '#FF9BB3', 'Cháu gái': '#FFC2DD', 'Cháu trai': '#9BE3A8', 'Cả nhà': '#F2C14E' };
+function render(t) {
+  let k = SCENES.findIndex(s => t >= s.s && t < s.e) + 1;
+  if (k === 0) k = SCENES.length;
+  for (const i in SC) {
+    const on = +i === k;
+    show(SC[i].g, on);
+    if (on) SC[i].render(t, t - SCENES[i - 1].s);
+  }
+  let d = 0;
+  SCENES.forEach((s, i) => { if (i > 0 && i < 3) d = Math.max(d, 1 - Math.abs(t - s.s) / .3); });
+  op(dip, d);
+  const ln = LINES.find((l, i) => t >= l.s - .05 && t <= l.e + .3 && i < 10);
+  capEl.innerHTML = ln ? (ln.who ? `<b style="color:${COL[ln.who]}">${ln.who}:</b>` : '') + ln.text : '';
+  capEl.style.display = ln ? 'inline-block' : 'none';
+}
+render(0);
+</script>
+</body>
+</html>
