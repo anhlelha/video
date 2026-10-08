@@ -10,11 +10,9 @@ window.ready = new Promise(res => document.getElementById('f').onload = async ()
   w.render(w.eval('LINES[11].e') - .3);
   d.getElementById('cap').style.display = 'none';
   const q = [...d.querySelectorAll('text')].find(e => e.textContent.startsWith('Nếu coding'));
-  q.setAttribute('y', 120); q.setAttribute('font-size', 74); q.setAttribute('opacity', 1); q.setAttribute('transform', '');
-  q.innerHTML = 'Nếu <tspan fill="#F2C14E">coding platform</tspan> là một chiếc ô tô,';
-  const q2 = q.cloneNode(false); q2.setAttribute('y', 225); q2.setAttribute('font-size', 96); q2.setAttribute('fill', '#F2C14E');
-  q2.setAttribute('stroke', '#121831'); q2.setAttribute('stroke-width', 12); q2.setAttribute('paint-order', 'stroke');
-  q2.textContent = 'bạn định lái xe thế nào?'; q.parentNode.appendChild(q2);
+  q.setAttribute('y', 190); q.setAttribute('font-size', 132); q.setAttribute('opacity', 1); q.setAttribute('transform', '');
+  q.setAttribute('fill', '#F2C14E'); q.setAttribute('stroke', '#121831'); q.setAttribute('stroke-width', 14); q.setAttribute('paint-order', 'stroke');
+  q.textContent = 'Bạn định lái xe thế nào?';
   res();
 });
 </script></body></html>

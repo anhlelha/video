@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Dọc 9:16</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: radial-gradient(circle at 50% 40%, #2C3A66, #121831 75%); font-family: 'Be Vietnam Pro', sans-serif; }
+  #title { position: absolute; top: 140px; left: 50px; right: 50px; text-align: center; color: #FFF8E8; font-weight: 800; font-size: 76px; line-height: 1.15; }
+  #title b { color: #F2C14E; }
+  #title small { display: block; margin-top: 18px; font-size: 34px; font-weight: 400; color: rgba(255,248,232,.7); }
+  #chap { position: absolute; top: 420px; left: 0; right: 0; text-align: center; }
+  #chap span { display: inline-block; padding: 10px 30px; border-radius: 40px; background: #D94F3D; color: #fff; font-size: 34px; font-weight: 700; }
+  #band { position: absolute; top: 510px; left: 0; width: 1080px; height: 648px; overflow: hidden; background: #F4E3C3; }
+  #band iframe { position: absolute; top: 0; left: -36px; width: 1920px; height: 1080px; border: 0; transform: scale(.6); transform-origin: 0 0; }
+  #cap { position: absolute; top: 1230px; left: 60px; width: 960px; text-align: center; }
+  #cap span { color: #fff; font-size: 56px; font-weight: 800; line-height: 1.32; text-shadow: 0 3px 0 #000, 0 0 18px rgba(0, 0, 0, .6); }
+  #cap b { display: block; font-size: 40px; margin-bottom: 6px; }
+  body.cover #title { top: 190px; font-size: 118px; line-height: 1.12; }
+  body.cover #chap, body.cover #cap { display: none; }
+  body.cover #band { top: 740px; }
+  #roles { display: none; position: absolute; top: 1470px; left: 40px; right: 40px; text-align: center; }
+  body.cover #roles { display: block; }
+  #roles span { display: inline-block; margin: 10px 8px; padding: 10px 28px; border-radius: 40px; color: #fff; font-size: 42px; font-weight: 800; border: 4px solid #fff; }
+</style>
+</head>
+<body>
+<div id="title">CHỒNG ƠI,<br><b>PHANH Ở ĐÂU?</b><small>Phân vai khi “lái” một dự án phần mềm</small></div>
+<div id="chap"><span></span></div>
+<div id="band"><iframe id="f"></iframe></div>
+<div id="cap"><span></span></div>
+<div id="roles"><span style="background:#E8743B">PM</span><span style="background:#3E7CB1">BA</span><span style="background:#2DA44E">Dev</span><span style="background:#D94F3D">Test</span><span style="background:#9B59B6">QC</span><span style="background:#1FA2A8">DevOps</span></div>
+<script>
+const CHAPTERS = ['1 · Đi Đồ Sơn đê!', '2 · Ai cầm lái?', '3 · Lên đường', '4 · Bạn lái thế nào?'];
+const COL = { 'Ông': '#F2C14E', 'Bố': '#8FC3F0', 'Mẹ': '#FF9BB3', 'Cháu gái': '#FFC2DD', 'Cháu trai': '#9BE3A8', 'Cả nhà': '#F2C14E' };
+const COVER = location.search.includes('cover');
+const f = document.getElementById('f');
+const chapEl = document.querySelector('#chap span'), capEl = document.querySelector('#cap span');
+let inner, last = null, lastChap = null;
+window.ready = new Promise(res => {
+  f.onload = async () => {
+    inner = f.contentWindow;
+    const st = inner.document.createElement('style');
+    st.textContent = '#cap { visibility: hidden !important; }';   // captions are drawn by this page instead
+    inner.document.head.appendChild(st);
+    await inner.document.fonts.ready; await document.fonts.ready;
+    window.DURATION = inner.DURATION;
+    if (COVER) {   // 9:16 cover: the "four questions" frame, title = the question
+      document.body.classList.add('cover');
+      document.getElementById('title').innerHTML = 'Bạn định<br><b>lái xe thế nào?</b>';
+      inner.render(inner.eval('LINES[11].e') - .3);
+      const q = [...inner.document.querySelectorAll('text')].find(e => e.textContent.startsWith('Nếu coding'));
+      q.setAttribute('opacity', 0);
+    }
+    res();
+  };
+  f.src = 'main.html';
+});
+window.render = t => {
+  inner.render(t);
+  const S = inner.eval('SCENES'), Ls = inner.eval('LINES');
+  let k = S.findIndex(s => t >= s.s && t < s.e); if (k < 0) k = S.length - 1;
+  const ch = CHAPTERS[k];
+  if (ch !== lastChap) { chapEl.textContent = ch; lastChap = ch; }
+  const end = t > Ls[Ls.length - 1].s - .3;   // final question: let the picture speak
+  chapEl.parentNode.style.visibility = end ? 'hidden' : 'visible';
+  const ln = end ? null : Ls.find(l => t >= l.s - .05 && t <= l.e + .3);
+  const s = ln ? (ln.who ? `<b style="color:${COL[ln.who]}">${ln.who}</b>` : '') + ln.text : '';
+  if (s !== last) { capEl.innerHTML = s; last = s; }
+};
+</script>
+</body>
+</html>

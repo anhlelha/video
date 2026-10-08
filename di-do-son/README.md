@@ -5,7 +5,8 @@ Video ngắn (~75 giây, 1920×1080) ví von việc phân vai trong làm phần 
 | File | Nội dung |
 |---|---|
 | `di-do-son.mp4` | Bản hoàn chỉnh: ảnh bìa 1,5s + hình, giọng đọc, nhạc, hiệu ứng âm thanh, phụ đề |
-| `thumbnail-16x9.png` | Ảnh bìa (tạo bằng `src/cover.js`) |
+| `di-do-son-tiktok-9x16.mp4` | Bản dọc 1080×1920 cho TikTok/Reels (`src/vertical.html`, `src/render_v.js`) |
+| `thumbnail-16x9.png`, `thumbnail-9x16.png` | Ảnh bìa "Bạn định lái xe thế nào?" (tạo bằng `src/cover.js`) |
 | `src/vo/lines.txt` | Lời thoại: `nhân_vật|tên_hiển_thị|phụ_đề|câu_đọc_cho_máy (tuỳ chọn)` |
 
 ## Kịch bản
@@ -22,7 +23,7 @@ Video ngắn (~75 giây, 1920×1080) ví von việc phân vai trong làm phần 
 Cần: Node + Playwright (Chromium), ffmpeg, Python 3 với `numpy`, `scipy`, `edge-tts`.
 
 1. Giọng đọc (chỉ khi sửa lời): `bash src/tts_all.sh`. Giọng mỗi nhân vật (edge-tts, chỉnh tốc độ/cao độ) khai báo trong hàm `voice()` của script.
-2. Dựng: `bash src/build.sh <thư_mục_tạm>`. Script tính mốc thời gian (`timeline.py` → `timeline.js`), render hình (`main.html`, `s1.js`–`s4.js`), tạo nhạc + hiệu ứng (`sfx.py`), ghép giọng đọc rồi xuất `di-do-son.mp4`.
+2. Dựng: `bash src/build.sh <thư_mục_tạm>`. Script tính mốc thời gian (`timeline.py` → `timeline.js`), render hình (`main.html`, `s1.js`–`s4.js`), tạo nhạc + hiệu ứng (`sfx.py`), ghép giọng đọc, rồi gọi `build_extra.sh` để làm ảnh bìa, bản dọc 9:16 và gắn bìa 1,5s vào đầu cả hai bản.
 3. Xem nhanh vài khung hình: `bash src/sheet.sh 3 20 47 70` → `src/prev/sheet.png`.
 
 Mọi chuyển động đều neo theo câu thoại, nên sửa lời hoặc đổi giọng thì hình tự khớp lại.
