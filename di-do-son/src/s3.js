@@ -66,7 +66,8 @@
     zin.forEach((z, i) => { const p = ((lt * .7 + i * .5) % 1); z.setAttribute('transform', `translate(${380 - p * 300} ${780 - i * 70 - Math.sin(p * 6) * 20}) rotate(-8)`); op(z, moving && !panic ? Math.sin(p * Math.PI) : 0); });
     lines.forEach((l, i) => { const p = ((lt * 1.5 + i * .2) % 1); l.setAttribute('x', 360 - p * 500); l.setAttribute('y', 760 + i * 36); op(l, moving ? .6 * (1 - p) : 0); });
     // buffalo walks onto the road, then the car closes in
-    const b1 = seg(t10, -1.4, 0), b2 = seg(t10, 0, 5.05);
+    const D10 = LINES[9].e - LINES[9].s;
+    const b1 = seg(t10, -1.4, 0), b2 = seg(t10, 0, D10 + .2);
     const bx = lerp(2300, 1520, easeOut(b1)) - lerp(0, 300, easeIn(b2));
     tr(buf.g, bx, 935); show(buf.g, t10 > -1.5);
     buf.legs.forEach((lg, i) => { const base = [-80, 90, -60, 110][i]; lg.setAttribute('transform', `translate(${base} -120) rotate(${b1 < 1 ? Math.sin(t * 8 + i * 2) * 12 : 0})`); });
@@ -75,16 +76,16 @@
     show(moo, mo > .01); tr(moo, bx - 80, 600, 0, mo);
     show(bang, panic); tr(bang, 820, 640 + Math.sin(t * 12) * 6, 0, easeBack(seg(t10, 0, .3)));
     // speech bubble
-    const lines10 = [[.1, 'Á Á Á!!!'], [1.15, 'CON TRÂU!'], [2.3, 'CHỒNG ƠI!'], [3.3, 'PHANH Ở ĐÂU???']];
+    const lines10 = [[.02, 'Á Á Á!!!'], [.25, 'CON TRÂU!'], [.47, 'CHỒNG ƠI!'], [.68, 'PHANH Ở ĐÂU???']].map(([f, w]) => [f * D10, w]);
     let cur = null; lines10.forEach(([s, w]) => { if (t10 > s) cur = [s, w]; });
-    show(bub, !!cur && t10 < 5.2);
+    show(bub, !!cur && t10 < D10 + .3);
     if (cur) { bubT.textContent = cur[1]; tr(bub, 760, 300, Math.sin(t * 25) * 1.5, easeBack(seg(t10, cur[0], cur[0] + .2))); }
     // pedals: foot dithers between the three pedals
     const pd = easeBack(seg(t10, 2.6, 3.0));
     show(ped.g, pd > .01); ped.g.setAttribute('transform', `translate(1640 300) scale(${pd}) translate(-1640 -300)`);
     foot.setAttribute('transform', `translate(${28 + Math.sin(t * 9) * 95} ${-30 + Math.abs(Math.cos(t * 9)) * 20})`);
     // camera zooms in as the buffalo gets close
-    const z = easeIn(seg(t10, 0, 5.05));
+    const z = easeIn(seg(t10, 0, D10 + .2));
     cam(world, lerp(960, 1080, z) + shake, lerp(540, 720, z) + (panic ? Math.cos(t * 47) * 3 : 0), lerp(1, 1.35, z));
   } };
 })();

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>Ảnh bìa</title>
+<style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden}iframe{border:0;width:1920px;height:1080px}</style></head>
+<body><iframe id="f" src="main.html"></iframe>
+<script>
+// Cover = the "four questions" frame of scene 4, with the full question as the title.
+window.ready = new Promise(res => document.getElementById('f').onload = async () => {
+  const w = document.getElementById('f').contentWindow, d = w.document;
+  await d.fonts.ready;
+  w.render(w.eval('LINES[11].e') - .3);
+  d.getElementById('cap').style.display = 'none';
+  const q = [...d.querySelectorAll('text')].find(e => e.textContent.startsWith('Nếu coding'));
+  q.setAttribute('y', 120); q.setAttribute('font-size', 74); q.setAttribute('opacity', 1); q.setAttribute('transform', '');
+  q.innerHTML = 'Nếu <tspan fill="#F2C14E">coding platform</tspan> là một chiếc ô tô,';
+  const q2 = q.cloneNode(false); q2.setAttribute('y', 225); q2.setAttribute('font-size', 96); q2.setAttribute('fill', '#F2C14E');
+  q2.setAttribute('stroke', '#121831'); q2.setAttribute('stroke-width', 12); q2.setAttribute('paint-order', 'stroke');
+  q2.textContent = 'bạn định lái xe thế nào?'; q.parentNode.appendChild(q2);
+  res();
+});
+</script></body></html>

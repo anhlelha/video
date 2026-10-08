@@ -4,7 +4,8 @@ Video ngắn (~75 giây, 1920×1080) ví von việc phân vai trong làm phần 
 
 | File | Nội dung |
 |---|---|
-| `di-do-son.mp4` | Bản hoàn chỉnh: hình, giọng đọc, nhạc, hiệu ứng âm thanh, phụ đề |
+| `di-do-son.mp4` | Bản hoàn chỉnh: ảnh bìa 1,5s + hình, giọng đọc, nhạc, hiệu ứng âm thanh, phụ đề |
+| `thumbnail-16x9.png` | Ảnh bìa (tạo bằng `src/cover.js`) |
 | `src/vo/lines.txt` | Lời thoại: `nhân_vật|tên_hiển_thị|phụ_đề|câu_đọc_cho_máy (tuỳ chọn)` |
 
 ## Kịch bản

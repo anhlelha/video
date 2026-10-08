@@ -7,7 +7,7 @@ trai|Cháu trai|Bố ơi, chìa khoá ạ!|
 bo|Bố|Brừm… Nổ máy rồi! Mời cả nhà lên xe!|Nổ máy rồi! Mời cả nhà lên xe!
 bo|Bố|Hôm nay em lái nhé, anh ngồi ghế phụ.|
 me|Mẹ|Ok! Lên đường thôi!|Ô kê! Lên đường thôi!
-me|Mẹ|Á á á! Con trâu! Chồng ơi… phanh ở đâu?!|Á á á! Con trâu! Chồng ơi... phanh ở đâu?!
+me_hot|Mẹ|Á á á! Con trâu! Chồng ơi… phanh ở đâu?!|Á á á á!!! Con trâu!!! Chồng ơi!!! Phanh ở đâu?!
 nar||Nếu coding platform là một chiếc ô tô…|Nếu, cô đing pờ lát phom, là một chiếc ô tô...
 nar||Ai giữ chìa khoá? Ai nổ máy? Ai cầm lái… và ai biết phanh ở đâu?|Ai giữ chìa khoá? Ai nổ máy? Ai cầm lái... và ai biết, phanh ở đâu?
 nar||Bạn định lái chiếc xe này thế nào?|
