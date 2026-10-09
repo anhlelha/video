@@ -23,11 +23,13 @@ function txt(s,a,p){const e=el('text',a,p);e.textContent=s;return e;}
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), seg=(t,a,b)=>clamp((t-a)/(b-a));
 const easeOut=p=>1-Math.pow(1-p,3), easeBack=p=>{const c=1.9;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2);};
 const L=i=>LS[i-1], E=i=>LS[i-1]+LD[i-1];
+// time when phrase ph is spoken in line i (char-proportional estimate)
+const K=(i,ph,d=0)=>{const s=SAY[i-1],k=s.indexOf(ph);if(k<0)throw new Error('K '+i+' '+ph);return L(i)+LD[i-1]*k/s.length+d;};
 const C={bg:'#FBF8F1',ink:'#22252B',muted:'#6B6F78',blue:'#3B7DD8',blueF:'#CFE0F7',orange:'#E8843B',orangeF:'#FBDDC4',
   green:'#2E9E5B',greenF:'#C9EBD6',grey:'#E4E2DC',gold:'#F2B33D',red:'#D9473B',panel:'#FFFFFF'};
 // layout: ?v → vertical 1080x1920 (TikTok, content kept inside UI safe zone), else 1920x1080
 const V=location.search.includes('v');
-const LY=V?{W:1080,H:1920,BX:[70,558],BY:330,PX:40,PY:862,PW:920,PH:510,Y0:930,DY:78,
+const LY=V?{W:1080,H:1920,BX:[70,558],BY:330,PX:40,PY:862,PW:920,PH:510,Y0:925,DY:70,
   subY:1385,subH:115,subF:36,cx:500}
  :{W:1920,H:1080,BX:[70,558],BY:390,PX:1170,PY:120,PW:690,PH:790,Y0:205,DY:100,
   subY:968,subH:112,subF:40,cx:960};
@@ -76,17 +78,19 @@ el('path',{d:`M${xa-13},${by2+34} L${xa},${by2+12} L${xa+13},${by2+34}`,fill:'no
 const pill=el('g',{},arBot);
 const pillR=el('rect',{x:(xa+xb)/2-145,y:ylow-34,width:290,height:68,rx:34,fill:C.green},pill);
 const pillT=txt('B → A: ? viên',{x:(xa+xb)/2,y:ylow+12,'font-size':36,'font-weight':800,fill:'#fff','text-anchor':'middle'},pill);
-const flash=el('g',{opacity:0},boxL); // "thiếu" badge for the 26-ball check
-el('rect',{x:slot(0,0,1)[0]-80,y:LY.BY+BH/2-34,width:160,height:58,rx:29,fill:C.red},flash);
-txt('7 < 8',{x:slot(0,0,1)[0],y:LY.BY+BH/2+6,'font-size':34,'font-weight':800,fill:'#fff','text-anchor':'middle'},flash);
+function badge(str){const g=el('g',{opacity:0},boxL),x=slot(0,0,1)[0]; // "thiếu" badge on A's white group
+  el('rect',{x:x-80,y:LY.BY+BH/2-34,width:160,height:58,rx:29,fill:C.red},g);
+  txt(str,{x,y:LY.BY+BH/2+6,'font-size':34,'font-weight':800,fill:'#fff','text-anchor':'middle'},g);return g;}
+const flash5=badge('5 < 8'), flash=badge('7 < 8');
 
 // ---------- ball moves ----------
 // scenario = start time + moves [t0, from, to, colour, n, stagger, count(+1/-1/0)]
 const SCN=[
-  {t:-1,mv:[[L(6)+1.6,0,1,0,9,.2,0],[L(6)+4.0,0,1,1,1,0,0],
-    [L(9)+.2,1,0,1,10,.16,1],[L(9)+2.2,1,0,2,9,.16,1],[L(10)+3.6,1,0,0,8,.2,1],[L(12)+2.4,0,1,0,1,0,-1]]},
-  {t:L(13)+.4,mv:[[L(13)+1.6,0,1,0,5,.12,0],[L(13)+2.5,0,1,1,5,.12,0],
-    [L(13)+4.6,1,0,2,9,.1,1],[L(13)+5.8,1,0,1,14,.08,1],[L(13)+7.6,1,0,0,4,.12,1]]}];
+  {t:-1,mv:[[K(6,'10 viên'),0,1,0,4,.15,0],[K(6,'10 viên',.8),0,1,1,3,.15,0],[K(6,'10 viên',1.4),0,1,2,3,.15,0]]},
+  {t:L(8)-.2,mv:[[K(8,'9 viên trắng'),0,1,0,9,.2,0],[K(8,'1 viên xanh'),0,1,1,1,0,0],
+    [K(10,'10 viên xanh'),1,0,1,10,.16,1],[K(10,'9 viên đỏ'),1,0,2,9,.16,1],[K(11,'Bốc thêm'),1,0,0,8,.2,1],[K(12,'26 viên'),0,1,0,1,0,-1]]},
+  {t:K(13,'Thử',-.4),mv:[[K(13,'5 trắng'),0,1,0,5,.12,0],[K(13,'5 xanh'),0,1,1,5,.12,0],
+    [K(13,'9 đỏ'),1,0,2,9,.1,1],[K(13,'14 xanh'),1,0,1,14,.08,1],[K(13,'4 trắng'),1,0,0,4,.12,1]]}];
 const FL=.7;
 function ballState(t){
   let s=SCN[0];for(const x of SCN)if(t>=x.t)s=x;
@@ -125,30 +129,40 @@ ptext('A → B: 10 viên (màu bất kỳ)',2,L(3)+1.5,g2,{w:700,color:C.orange}
 ptext('B → A: ? viên',3,L(4)+1.5,g2,{w:800,color:C.green});
 ptext('để chắc chắn A có ít nhất',4,L(4)+4,g2,{});
 ptext('8 viên mỗi loại',5,L(4)+4.4,g2,{w:800,box:'#E3F5EA'});
-// phase 1
-const s1=L(5),s1e=L(8)-.3;
+// phase 1: A surely lacks a colour
+const s1=L(5),s1e=L(7)-.3;
 header('Bước 1',s1,s1e,C.orange);
-ptext('“Chắc chắn” → xét trường hợp',1,s1+1,s1e,{});
-ptext('XUI NHẤT',2,s1+1.6,s1e,{w:800,color:C.red});
-ptext('A → B: 9 trắng + 1 xanh',3,L(6)+1.5,s1e,{w:700,color:C.orange});
-ptext('A: 0 trắng, 8 xanh, 9 đỏ',4,L(7)+.6,s1e,{w:700,box:'#FFF1E5'});
-ptext('B: 18 trắng, 10 xanh, 9 đỏ',5,L(7)+4.4,s1e,{w:700});
-// phase 2
-const s2=L(8),s2e=L(12)-.3;
+ptext('A chắc chắn thiếu ít nhất 1 màu',1,s1+1,s1e,{w:700});
+ptext('10 viên lấy từ 3 màu',2,K(6,'10 viên'),s1e,{});
+ptext('Mỗi màu tối đa 3 → chỉ 9 viên',3,K(6,'Nếu'),s1e,{});
+ptext('→ Có màu bị lấy ít nhất 4 viên',4,K(6,'Vậy'),s1e,{w:700});
+ptext('Màu đó còn nhiều nhất 5 < 8',5,K(6,'Màu đó'),s1e,{w:800,color:C.red,box:'#FFF1E5'});
+// phase 2: worst draw from B, on one concrete case
+const s2=L(7),s2e=L(13)-.3;
 header('Bước 2',s2,s2e,C.blue);
-ptext('A cần thêm 8 trắng',1,s2+1,s2e,{w:700});
-ptext('Xui nhất: bốc xanh, đỏ trước',2,s2+4.5,s2e,{});
-ptext('10 + 9 = 19 viên (chưa có trắng)',3,L(9)+3,s2e,{w:700});
-ptext('Bốc thêm 8 trắng',4,L(10)+3.6,s2e,{});
-ptext('19 + 8 = 27 viên',5,L(10)+6.8,s2e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
-// phase 3
-const s3=L(12),s3e=L(14)-.3;
+ptext('Xui nhất: bốc màu khác trước',1,s2+1,s2e,{w:700});
+ptext('Thử: A → B 9 trắng + 1 xanh',2,K(8,'ta thử'),s2e,{w:700,color:C.orange});
+ptext('A cần thêm 8 trắng',3,K(9,'Hộp A cần'),s2e,{});
+ptext('10 + 9 = 19 viên (chưa có trắng)',4,K(10,'là 19'),s2e,{w:700});
+ptext('19 + 8 trắng = 27 viên',5,K(11,'Tổng cộng'),s2e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
+ptext('26 viên → A có thể chỉ 7 trắng ✗',6,K(12,'Còn nếu'),s2e,{w:700,color:C.red});
+// phase 3: another first move gives the same answer
+const s3=L(13),s3e=L(14)-.3;
 header('Bước 3',s3,s3e,C.green);
-ptext('26 viên → A có thể chỉ 7 trắng ✗',1,s3+2.5,s3e,{w:700,color:C.red});
-ptext('Cách khác: A → B 5 trắng, 5 xanh',2,L(13)+1.4,s3e,{});
-ptext('A: 4 trắng, 4 xanh, 9 đỏ',3,L(13)+3,s3e,{w:700});
-ptext('9 đỏ + 14 xanh + 4 trắng = 27',4,L(13)+8.6,s3e,{w:700});
-ptext('Luôn cần 27 viên!',5,L(13)+10,s3e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
+ptext('Nhận xét: nếu A chuyển kiểu khác?',1,s3+1,s3e,{});
+ptext('Thử: A → B 5 trắng + 5 xanh',2,K(13,'Thử'),s3e,{w:700,color:C.orange});
+ptext('A: 4 trắng, 4 xanh, 9 đỏ',3,K(13,'5 xanh',1),s3e,{w:700});
+ptext('9 đỏ + 14 xanh + 4 trắng = 27',4,K(13,'9 đỏ'),s3e,{w:700});
+ptext('Vẫn là 27 viên!',5,K(13,'Vẫn là'),s3e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
+// phase 4: why it is always 27
+const s4=L(14),s4e=L(16)-.3;
+header('Vì sao?',s4,s4e,C.ink);
+ptext('A mất thêm 1 trắng (thay 1 xanh):',1,s4+1.5,s4e,{});
+ptext('• Phải bốc thêm 1 trắng: +1',2,K(14,'thì phải'),s4e,{w:700,color:C.green});
+ptext('• B bớt 1 xanh bốc nhầm: −1',3,K(14,'Nhưng'),s4e,{w:700,color:C.red});
+ptext('Thêm 1, bớt 1 → vẫn 27',4,K(14,'Thêm 1'),s4e,{w:800,box:'#FFF1E5'});
+ptext('Chuyển thế nào cũng ra 27!',5,L(15)+.3,s4e,{w:800,size:38,color:C.green,box:'#E3F5EA'});
+ptext('Các em thử thêm vài cách nhé!',6,K(15,'Các em'),s4e,{w:700,color:C.orange});
 
 // ---------- title & answer cards ----------
 const title=el('g',{}), CX=LY.cx;
@@ -162,7 +176,7 @@ if(V){ // TikTok cover: question + two boxes + monkey (drawn later)
   txt('9 trắng · 9 xanh · 9 đỏ mỗi hộp',{x:540,y:960,'font-size':40,'font-weight':700,fill:C.muted,'text-anchor':'middle'},title);}
 else{txt('TOÁN LỚP 5',{x:960,y:330,'font-size':44,'font-weight':700,fill:C.orange,'text-anchor':'middle','letter-spacing':8},title);
   txt('Bài toán bốc bi',{x:960,y:450,'font-size':110,'font-weight':800,fill:C.ink,'text-anchor':'middle'},title);
-  txt('Bí kíp: “chắc chắn” → xét trường hợp xui nhất',{x:960,y:550,'font-size':46,fill:C.muted,'text-anchor':'middle'},title);}
+  txt('Bí kíp: “chắc chắn” → nghĩ tới lúc bốc xui nhất',{x:960,y:550,'font-size':46,fill:C.muted,'text-anchor':'middle'},title);}
 const tBalls=el('g',{display:V?'none':'inline'},title);
 [0,1,2,1,0,2,1].forEach((c,i)=>ball(c,tBalls,780+i*60,680).setAttribute('class','tb'));
 const ans=el('g',{opacity:0});
@@ -175,9 +189,9 @@ txt('chuyển từ hộp B sang hộp A',{x:CX,y:ACY+145,'font-size':V?44:48,'fo
 const tip=el('g',{opacity:0},ans), TY=V?1010:775;
 if(V){el('rect',{x:CX-430,y:TY-75,width:860,height:170,rx:50,fill:C.gold},tip);
   txt('💡 “Chắc chắn” → nghĩ tới',{x:CX,y:TY-5,'font-size':48,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);
-  txt('trường hợp xui nhất!',{x:CX,y:TY+60,'font-size':48,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);}
+  txt('lúc bốc xui nhất!',{x:CX,y:TY+60,'font-size':48,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);}
 else{el('rect',{x:360,y:720,width:1200,height:110,rx:55,fill:C.gold},tip);
-  txt('💡 “Chắc chắn” → nghĩ tới trường hợp xui nhất!',{x:960,y:793,'font-size':48,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);}
+  txt('💡 “Chắc chắn” → nghĩ tới lúc bốc xui nhất!',{x:960,y:793,'font-size':48,'font-weight':800,fill:C.ink,'text-anchor':'middle'},tip);}
 
 // ---------- monkey teaching assistant (TikTok version only) ----------
 const MK={brown:'#8A5A33',dark:'#5E3B1F',tan:'#F1CFA4',pink:'#F29C9C'};
@@ -250,12 +264,14 @@ const GC=(b,c)=>{const p=slot(b,c,4);return [p[0],p[1]];}, BC=b=>GC(b,1);
 function monkey(t){
   if(!V)return;
   // position: cover → perch under box B → answer page
-  const pa=easeIO(seg(t,L(2)-.7,L(2)-.1)),pb=easeIO(seg(t,L(14)-.3,L(14)+.5));
+  const pa=easeIO(seg(t,L(2)-.7,L(2)-.1)),pb=easeIO(seg(t,L(16)-.3,L(16)+.5));
   const P=[0,1,2].map(i=>lerp(lerp(POS.cover[i],POS.perch[i],pa),POS.ans[i],pb));
   const SEQ=[[0,'wave'],[L(2)-.4,'point',BC(0)],[L(2)+3.2,'point',BC(1)],[L(3)+1.2,'point',[540,LY.BY-90]],[L(4),'think'],
-    [L(5),'inspect',BC(0)],[L(6)+1.4,'point',GC(0,0)],[L(7),'write'],[L(8),'inspect',BC(1)],[L(9),'point',[(xa+xb)/2,ylow]],
-    [L(10),'write'],[L(10)+6.5,'cheer'],[L(11),'thumb'],[L(12),'think'],[L(12)+2.4,'point',GC(0,0)],
-    [L(13),'inspect',BC(1)],[L(13)+9,'cheer'],[L(14)-.2,'party']];
+    [L(6),'inspect',BC(0)],[K(6,'Màu đó'),'point',GC(0,0)],
+    [L(7),'inspect',BC(1)],[K(8,'ta thử'),'point',GC(0,0)],[L(9),'write'],[L(10),'point',[(xa+xb)/2,ylow]],
+    [L(11),'write'],[K(11,'Tổng cộng'),'cheer'],[L(12),'thumb'],[K(12,'Còn nếu'),'think'],[K(12,'7 viên'),'point',GC(0,0)],
+    [L(13),'think'],[K(13,'Thử'),'inspect',BC(1)],[K(13,'Vẫn là'),'cheer'],[L(14),'think'],[K(14,'Nhưng'),'point',BC(1)],
+    [K(14,'Thêm 1'),'write'],[L(15),'thumb'],[K(15,'Các em'),'wave'],[L(16)-.2,'party']];
   let i=0;while(i+1<SEQ.length&&t>=SEQ[i+1][0])i++;
   const cur=pose(SEQ[i][1],t,P,SEQ[i][2]),prev=i?pose(SEQ[i-1][1],t,P,SEQ[i-1][2]):cur,b=easeIO(seg(t,SEQ[i][0],SEQ[i][0]+.4));
   const v=k=>lerp(prev[k],cur[k],b),pk=k=>b<.5?prev[k]:cur[k];
@@ -274,7 +290,7 @@ function monkey(t){
   const mo=v('mo');smile.setAttribute('opacity',1-mo);mouthO.setAttribute('opacity',mo);mouthO.setAttribute('ry',3+6*mo);
   thinkQ.setAttribute('opacity',v('q'));thinkQ.setAttribute('transform',`translate(0 ${-6*Math.sin(t*3)})`);
   speech.setAttribute('opacity',1-seg(t,L(2)-1,L(2)-.6));
-  const tc=t-L(14);
+  const tc=t-L(16);
   CONF.forEach(c=>{const y=-40+((tc*c.d*420+c.ph*300)%1500);c.e.setAttribute('transform',`translate(${c.x+30*Math.sin(tc*2+c.ph)} ${y}) rotate(${tc*200*c.d+c.ph*90})`);});
 }
 
@@ -302,7 +318,7 @@ function render(t){
   const S=ballState(t);
   balls.forEach((b,i)=>b.e.setAttribute('transform',`translate(${S.pos[i][0]} ${S.pos[i][1]})`));
   S.z.forEach(id=>ballL.appendChild(balls[id].e)); // flying balls on top
-  ballL.setAttribute('opacity',Math.min(1,Math.abs(t-SCN[1].t)/.35));
+  ballL.setAttribute('opacity',Math.min(1,...SCN.slice(1).map(x=>Math.abs(t-x.t)/.35)));
   const chk=t>L(4)+4;
   fade(ghost,t,L(4)+4,.6);
   cnt.forEach((row,b)=>row.forEach((k,c)=>{const n=S.cnts[b][c];k.tx.textContent=n;
@@ -310,19 +326,20 @@ function render(t){
     k.bg.setAttribute('stroke',b===0&&chk?(ok?C.green:C.orange):'none');k.bg.setAttribute('stroke-width',3);}));
   fade(arTop,t,L(3)+1.2,.6);
   fade(arBot,t,L(4)+1.2,.6);
-  pillT.textContent='B → A: '+(t<L(9)&&t<SCN[1].t?'?':S.n)+' viên';
-  pillR.setAttribute('fill',S.n===26&&t<SCN[1].t?C.red:C.green);
-  const pp=Math.max(seg(t,L(10)+6.6,L(10)+7.2)*(1-seg(t,L(10)+7.6,L(10)+8.2)),seg(t,L(13)+8.8,L(13)+9.4)*(1-seg(t,L(13)+9.8,L(13)+10.4)));
+  pillT.textContent='B → A: '+(t<L(10)?'?':S.n)+' viên';
+  pillR.setAttribute('fill',S.n===26&&t<SCN[2].t?C.red:C.green);
+  const pp=Math.max(seg(t,K(11,'27'),K(11,'27',.6))*(1-seg(t,K(11,'27',1),K(11,'27',1.6))),seg(t,K(13,'Vẫn là'),K(13,'Vẫn là',.6))*(1-seg(t,K(13,'Vẫn là',1),K(13,'Vẫn là',1.6))));
   pill.setAttribute('transform',`translate(${(xa+xb)/2} ${ylow}) scale(${1+.18*Math.sin(Math.PI*pp)}) translate(${-(xa+xb)/2} ${-ylow})`);
-  pop(flash,t,L(12)+3.4,slot(0,0,1)[0],LY.BY+BH/2,SCN[1].t-.4,.3);
+  pop(flash5,t,K(6,'Màu đó'),slot(0,0,1)[0],LY.BY+BH/2,SCN[1].t-.4,.3);
+  pop(flash,t,K(12,'7 viên',-.3),slot(0,0,1)[0],LY.BY+BH/2,SCN[2].t-.4,.3);
   // panel items
   for(const it of items){const p=easeOut(seg(t,it.t0,it.t0+.45)),q=1-seg(t,it.t1,it.t1+.4);
     it.g.setAttribute('opacity',p*q);it.g.setAttribute('transform',`translate(${(1-p)*30} 0)`);}
   // answer
-  fade(ans,t,L(14)-.1,.6);
+  fade(ans,t,L(16)-.1,.6);
   monkey(t);
-  const ap=seg(t,L(14),L(14)+.7);ansCard.setAttribute('transform',`translate(${CX} ${ACY}) scale(${ap>0?easeBack(ap):.001}) translate(${-CX} ${-ACY})`);
-  pop(tip,t,L(14)+4,CX,TY);
+  const ap=seg(t,L(16),L(16)+.7);ansCard.setAttribute('transform',`translate(${CX} ${ACY}) scale(${ap>0?easeBack(ap):.001}) translate(${-CX} ${-ACY})`);
+  pop(tip,t,K(16,'Mẹo'),CX,TY);
   // subtitles
   let s='';for(let i=0;i<LS.length;i++)if(t>=LS[i]-.1&&t<LS[i]+LD[i]+.5)s=SUBS[i];
   setSub(s);show(sub,!!s);
