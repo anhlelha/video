@@ -1,0 +1,14 @@
+Chào các em! Hôm nay mình cùng giải một bài toán bốc bi rất hay nhé.|Chào các em! Cùng giải bài toán bốc bi nhé.
+Có hai hộp bi A và B. Mỗi hộp có 9 viên bi trắng, 9 viên bi xanh và 9 viên bi đỏ.|Hộp A, B: mỗi hộp có 9 trắng, 9 xanh, 9 đỏ.
+Đầu tiên, người ta chuyển 10 viên bi từ hộp A sang hộp B. Ta không biết đó là những viên màu gì.|Chuyển 10 viên bi từ A sang B (không biết màu gì).
+Hỏi: cần chuyển từ hộp B sang hộp A bao nhiêu viên bi, để chắc chắn hộp A có ít nhất 8 viên bi mỗi loại?|Cần chuyển từ B sang A bao nhiêu viên để chắc chắn A có ít nhất 8 viên mỗi loại?
+Bước một. Chữ chắc chắn nghĩa là: dù xui đến mấy cũng phải đúng. Vì vậy, ta xét trường hợp xui nhất.|Bước 1: “Chắc chắn” → xét trường hợp xui nhất.
+Xui nhất là 10 viên chuyển đi gồm cả 9 viên trắng và 1 viên xanh. Hộp A hết sạch bi trắng!|Xui nhất: A chuyển đi 9 trắng + 1 xanh → A hết bi trắng!
+Lúc này, hộp A còn 0 trắng, 8 xanh, 9 đỏ. Hộp B có 18 trắng, 10 xanh, 9 đỏ.|A: 0 trắng, 8 xanh, 9 đỏ. B: 18 trắng, 10 xanh, 9 đỏ.
+Bước hai. Hộp A cần thêm 8 viên trắng. Nhưng khi bốc từ hộp B, xui nhất là bốc trúng hết bi xanh và bi đỏ trước.|Bước 2: A cần thêm 8 trắng. Xui nhất: bốc hết xanh, đỏ trước.
+10 viên xanh, cộng 9 viên đỏ, là 19 viên, mà vẫn chưa có viên trắng nào.|10 xanh + 9 đỏ = 19 viên, chưa có viên trắng nào.
+Bây giờ trong hộp B chỉ còn bi trắng. Bốc thêm 8 viên trắng nữa. Tổng cộng: 19 cộng 8, bằng 27 viên.|Bốc thêm 8 trắng: 19 + 8 = 27 viên.
+Lúc này hộp A có 8 trắng, 18 xanh, 18 đỏ. Đủ cả ba loại!|A: 8 trắng, 18 xanh, 18 đỏ → đủ cả 3 loại!
+Bước ba, kiểm tra. Nếu chỉ chuyển 26 viên, hộp A có thể chỉ có 7 viên trắng. Chưa chắc chắn!|Bước 3: Chỉ 26 viên → A có thể chỉ có 7 trắng. Chưa chắc!
+Thử cách khác: A chuyển đi 5 trắng và 5 xanh. Xui nhất phải bốc 9 đỏ, 14 xanh, rồi mới đến 4 trắng. Vẫn là 27 viên!|Cách khác: A mất 5 trắng, 5 xanh → 9 + 14 + 4 = 27 viên.
+Đáp số: 27 viên bi. Mẹo nhớ nè: muốn chắc chắn, hãy nghĩ tới trường hợp xui nhất! Chúc các em học tốt!|Đáp số: 27 viên. Mẹo: “chắc chắn” → nghĩ trường hợp xui nhất!
