@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Generate voice-over (edge-tts) + timings.js from lines.txt
+# Generate voice-over (ElevenLabs; TTS=edge for edge-tts) + timings.js from lines.txt
 set -euo pipefail
 cd "$(dirname "$0")"; mkdir -p vo
 i=0; LS=(); LD=(); SUBS=(); SAY=(); t=1.0
 while IFS='|' read -r say sub; do
   i=$((i+1))
-  python3 tts.py --voice vi-VN-HoaiMyNeural --rate=-5% --text "$say" --write-media vo/v$i.mp3 >/dev/null
+  if [ "${TTS:-eleven}" = edge ]; then python3 tts.py --voice vi-VN-HoaiMyNeural --rate=-5% --text "$say" --write-media vo/v$i.mp3 >/dev/null
+  else python3 tts_eleven.py "$say" vo/v$i.mp3; fi
   d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 vo/v$i.mp3)
   case $i in 5|7|13|16) t=$(python3 -c "print(round($t+0.6,2))");; esac
   LS+=("$t"); LD+=("$d"); SUBS+=("\"$sub\""); SAY+=("\"$say\"")
